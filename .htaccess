@@ -1,0 +1,22 @@
+# /**
+#  * @author [RadevankaProject]
+#  * @email radevankaproject@mail.com]
+#  * @create date 2025-05-07 18:31:56
+#  * @modify date 2025-05-07 18:31:56
+#  * @desc [description]
+#  */
+
+<IfModule mod_rewrite.c>
+RewriteEngine on
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# ---- Isi URL Custom ---
+
+#DashboardHome or Index
+RewriteRule ^home$ index.php [L]
+RewriteRule ^login$ modul/login.php [L]
+RewriteRule ^out$ modul/logout.php [L]
+
+Options All -Indexes
+</IfModule>
