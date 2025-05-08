@@ -1,13 +1,11 @@
 <?php
 include '../_func/controlWeb.php';
 
-$error_message = ""; // variabel untuk menampung pesan error
-
 if (isset($_POST['login'])) {
   if (!check_csrf_token($_POST['csrf_token'] ?? '')) {
-    $error_message = '<div class="alert alert-danger mt-3">Token CSRF tidak valid.</div>';
+    toastNotif('error', 'Token CSRF tidak valid.');
   } elseif (empty($_POST['username']) || empty($_POST['password'])) {
-    $error_message = '<div class="alert alert-danger mt-3">Username dan Password wajib diisi.</div>';
+    toastNotif('error', 'Username dan Password wajib diisi.');
   } else {
     $u = $db->real_escape_string(trim($_POST['username']));
     $p = $db->real_escape_string(trim($_POST['password']));
@@ -24,13 +22,14 @@ if (isset($_POST['login'])) {
         $_SESSION['level']    = $r['level'];
         $_SESSION['img']      = $r['img'];
 
+        toastNotif('success', 'Selamat datang di TOPSIS App');
         header("Location: " . base_url() . "home");
         exit;
       } else {
-        $error_message = '<div class="alert alert-danger mt-3">Password salah.</div>';
+        toastNotif('error', 'Password Salah!');
       }
     } else {
-      $error_message = '<div class="alert alert-danger mt-3">Username tidak ditemukan.</div>';
+      toastNotif('error', 'Username tidak ditemukan!');
     }
   }
 }
@@ -57,6 +56,7 @@ if (!empty($_SESSION['username'])) {
   <link href="assets/vendors/mono-social-icons/monosocialiconsfont.css" rel="stylesheet" type="text/css">
   <link href="assets/vendors/feather-icons/feather.css" rel="stylesheet" type="text/css">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/jquery.perfect-scrollbar/0.7.0/css/perfect-scrollbar.min.css" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
   <link href="assets/css/style.css" rel="stylesheet" type="text/css">
   <!-- Head Libs -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script>
@@ -85,10 +85,9 @@ if (!empty($_SESSION['username'])) {
               <button class="btn btn-block btn-rounded btn-md btn-color-scheme text-uppercase fw-600 ripple" type="submit" name="login">Sign In</button>
             </div>
           </form>
-          <?php echo $error_message; ?>
           <!-- /form -->
-          <!-- <button type="button" class="btn btn-block btn-rounded btn-outline-facebook ripple" title="Login with Facebook">Connect using <span class="fw-700">facebook</span>
-          </button> -->
+          <a href="<?= base_url(); ?>home"><button type="button" class="btn btn-block btn-rounded btn-outline-facebook ripple" title="Login with Facebook">Kembali ke <span class="fw-700">Dashboard</span>
+            </button></a>
         </div>
         <!-- /.w-75 -->
       </div>
@@ -100,7 +99,39 @@ if (!empty($_SESSION['username'])) {
   <!-- Scripts -->
   <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
   <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
   <script type="text/javascript" src="assets/js/material-design.js"></script>
+  <script>
+    $(document).ready(function() {
+      // Konfigurasi Toastr
+      toastr.options = {
+        "closeButton": true,
+        "debug": false,
+        "newestOnTop": true,
+        "progressBar": true,
+        "positionClass": "toast-top-right",
+        "preventDuplicates": true,
+        "onclick": null,
+        "showDuration": "300",
+        "hideDuration": "1000",
+        "timeOut": "5000",
+        "extendedTimeOut": "1000",
+        "showEasing": "swing",
+        "hideEasing": "linear",
+        "showMethod": "fadeIn",
+        "hideMethod": "fadeOut",
+        "stack": false
+      };
+
+      // Tampilkan notifikasi dari session
+      <?php if (isset($_SESSION['toast_notifications'])): ?>
+        <?php foreach ($_SESSION['toast_notifications'] as $notification): ?>
+          toastr.<?= $notification['type'] ?>('<?= addslashes($notification['message']) ?>');
+        <?php endforeach; ?>
+        <?php unset($_SESSION['toast_notifications']); ?>
+      <?php endif; ?>
+    });
+  </script>
 </body>
 
 </html>

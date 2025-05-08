@@ -1,3 +1,5 @@
+<?php
+?>
 <!-- Page Title Area -->
 <div class="row page-title clearfix">
   <div class="page-title-left">
@@ -16,6 +18,7 @@
   </div>
   <!-- /.page-title-right -->
 </div>
+
 <!-- /.page-title -->
 <!-- =================================== -->
 <!-- Different data widgets ============ -->

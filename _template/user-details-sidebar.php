@@ -4,9 +4,9 @@
     if (empty($_SESSION['username'])) {
     ?>
       <div class="d-inline-block pos-relative mr-b-10">
-        <figure class="thumb-sm mr-b-0 user--offline">
-          <button type="button" class="btn btn-pink btn-circle btn-lg ripple"><i class="material-icons list-icon">exit_to_app</i>
-            <!-- <img src="assets/demo/users/user1.jpg" class="rounded-circle" alt=""> -->
+        <!-- <figure class="thumb-sm mr-b-0 user--offline"> -->
+        <!-- <button type="button" class="btn btn-pink btn-circle btn-lg ripple"><i class="material-icons list-icon">exit_to_app</i> -->
+        <!-- <img src="assets/demo/users/user1.jpg" class="rounded-circle" alt=""> -->
         </figure><a href="<?= base_url(); ?>login" class="text-muted side-user-link"><i class="feather feather-settings list-icon"></i></a>
       </div>
       <!-- /.d-inline-block -->

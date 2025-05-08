@@ -48,6 +48,28 @@ if (!function_exists('base_url')) {
 }
 $base_url = base_url();
 
+#Error Message
+function displaySessionMessages()
+{
+  if (!empty($_SESSION['error'])) {
+    echo '<div class="alert alert-danger">' . htmlspecialchars($_SESSION['error']) . '</div>';
+    unset($_SESSION['error']);
+  }
+
+  if (!empty($_SESSION['success'])) {
+    echo '<div class="alert alert-success">' . htmlspecialchars($_SESSION['success']) . '</div>';
+    unset($_SESSION['success']);
+  }
+}
+
+function toastNotif($type, $message)
+{
+  $_SESSION['toast_notifications'][] = [
+    'type' => $type,
+    'message' => $message
+  ];
+}
+
 #Modul Control
 function modul($m)
 {
