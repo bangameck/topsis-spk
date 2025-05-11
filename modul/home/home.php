@@ -1,6 +1,7 @@
 <?php
 ?>
 <!-- Page Title Area -->
+<title>Dashboard</title>
 <div class="row page-title clearfix">
   <div class="page-title-left">
     <h6 class="page-title-heading mr-0 mr-r-5">Default</h6>

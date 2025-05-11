@@ -1,4 +1,7 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
 require_once __DIR__ . '/../../_func/controlWeb.php';
 
 if ($_SESSION['level'] != 1) {
@@ -8,41 +11,7 @@ if ($_SESSION['level'] != 1) {
         </script>";
   exit();
 }
-
-// Handle delete user
-if (isset($_GET['del_id'])) {
-  $id = filter_var($_GET['del_id'], FILTER_SANITIZE_NUMBER_INT);
-
-  // Get user data to delete image file
-  $stmt = $db->prepare("SELECT * FROM users WHERE user_id = ?");
-  $stmt->bind_param("i", $id);
-  $stmt->execute();
-  $user = $stmt->get_result()->fetch_assoc();
-  $stmt->close();
-
-  if ($user) {
-    // Delete user
-    $stmt = $db->prepare("DELETE FROM users WHERE user_id = ?");
-    $stmt->bind_param("i", $id);
-    $stmt->execute();
-    $stmt->close();
-
-    // Delete image file if exists
-    if ($user['img'] && file_exists('../../assets/img/profil/' . $user['img'])) {
-      unlink('../../assets/img/profil/' . $user['img']);
-    }
-
-    $_SESSION['success'] = "User deleted successfully!";
-  } else {
-    $_SESSION['failure'] = "User not found!";
-  }
-
-  header('location: users.php');
-  exit();
-}
 ?>
-
-
 
 <title>Halaman Users</title>
 <div class="row page-title clearfix">
@@ -109,25 +78,28 @@ if (isset($_GET['del_id'])) {
                       ?>
                     </td>
                     <td>
-                      <?php if ($user['img']): ?>
-                        <img src="../../assets/img/profil/<?php echo htmlspecialchars($user['img']); ?>" alt="Profile" style="max-width: 50px; max-height: 50px;">
-                      <?php else: ?>
-                        <span class="text-muted">No image</span>
-                      <?php endif; ?>
+                      <?php if ($user['img']) {
+                        $img = $user['img'];
+                      } else {
+                        $img = 'default.png';
+                      } ?>
+                      <figure class="thumb-xs2">
+                        <img class="rounded-circle" src="assets/img/profile/<?= $img; ?>" alt="">
+                      </figure>
                     </td>
                     <td><?php echo date('d M Y H:i', strtotime($user['created_at'])); ?></td>
                     <td>
                       <button class="btn btn-sm btn-warning edit-user"
-                        data-bs-toggle="modal"
-                        data-bs-target="#editUserModal"
-                        data-id="<?php echo $user['user_id']; ?>"
-                        data-username="<?php echo htmlspecialchars($user['username']); ?>"
-                        data-name="<?php echo htmlspecialchars($user['name']); ?>"
-                        data-level="<?php echo $user['level']; ?>"
-                        data-img="<?php echo htmlspecialchars($user['img']); ?>">
+                        data-toggle="modal"
+                        data-target="#editUserModal"
+                        data-id="<?= $user['user_id']; ?>"
+                        data-username="<?= htmlspecialchars($user['username']); ?>"
+                        data-name="<?= htmlspecialchars($user['name']); ?>"
+                        data-level="<?= $user['level']; ?>"
+                        data-img="<?= $user['img'] ? htmlspecialchars($user['img']) : 'default.png'; ?>">
                         <i class="fa fa-edit"></i> Edit
                       </button>
-                      <a href="users.php?del_id=<?php echo $user['user_id']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this user?')">
+                      <a href="<?= base_url(); ?>users/delete/<?= $user['user_id']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this user?')">
                         <i class="fa fa-trash"></i> Delete
                       </a>
                     </td>
@@ -144,56 +116,60 @@ if (isset($_GET['del_id'])) {
       </div>
     </div>
   </div>
-</div>
 
-<!-- Add User Modal -->
-<div class="modal fade" id="addUserModal" tabindex="-1" role="dialog" aria-labelledby="addUserModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <form id="addUserForm" action="<?= base_url(); ?>users/add" method="post" enctype="multipart/form-data">
-        <input type="hidden" name="action" value="add">
-
-        <div class="modal-header">
-          <h5 class="modal-title" id="addUserModalLabel">Add New User</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <div class="form-group">
-            <label for="username">Username</label>
-            <input type="text" class="form-control" id="username" name="username" required>
+  <!-- Add User Modal -->
+  <div class="modal fade" id="addUserModal" tabindex="-1" role="dialog" aria-labelledby="addUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <form id="addUserForm" action="<?= base_url(); ?>users/add" method="post" enctype="multipart/form-data">
+          <input type="hidden" name="action" value="add">
+          <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(generate_csrf_token()); ?>">
+          <div class="modal-header">
+            <h5 class="modal-title" id="addUserModalLabel">Add New User</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
           </div>
-          <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" class="form-control" id="password" name="password" required>
-          </div>
-          <div class="form-group">
-            <label for="name">Full Name</label>
-            <input type="text" class="form-control" id="name" name="name" required>
-          </div>
-          <div class="form-group">
-            <label for="level">Level</label>
-            <select class="form-control" id="level" name="level" required>
-              <option value="1">Admin</option>
-              <option value="2">Masyarakat</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Profile Image</label>
-            <div id="dragDropArea" class="drag-drop-area">
-              <p>Drag & drop your image here or click to browse</p>
-              <input type="file" id="imageInput" name="image" accept="image/*" style="display: none;">
-              <div id="imagePreviewContainer" style="display: none;">
-                <img id="imagePreview" class="preview-image" src="#" alt="Preview">
+          <div class="modal-body">
+            <div class="form-group">
+              <label for="username">Username</label>
+              <input type="text" class="form-control" id="username" name="username" required>
+            </div>
+            <div class="form-group">
+              <label for="password">Password</label>
+              <input type="password" class="form-control" id="password" name="password" required>
+            </div>
+            <div class="form-group">
+              <label for="name">Full Name</label>
+              <input type="text" class="form-control" id="name" name="name" required>
+            </div>
+            <div class="form-group">
+              <label for="level">Level</label>
+              <select class="form-control" id="level" name="level" required>
+                <option value="1">Admin</option>
+                <option value="2">Masyarakat</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Profile Image</label>
+              <div id="addDragDropArea" class="drag-drop-area border-2 border-dashed rounded p-4 text-center position-relative">
+                <p class="mb-2">Drag & drop your image here or <span class="text-primary fw-bold">click to browse</span></p>
+                <input type="file" id="addImageInput" name="image" accept="image/*" class="position-absolute top-0 start-0 w-100 h-100 opacity-0 cursor-pointer">
+                <div id="addImagePreviewContainer" class="mt-3 text-center d-none">
+                  <img id="addImagePreview" class="preview-image img-thumbnail" src="#" alt="Preview" style="max-height: 150px;">
+                  <button type="button" class="btn btn-sm btn-danger mt-2" id="addRemoveImageBtn">
+                    <i class="fas fa-times me-1"></i>Remove
+                  </button>
+                </div>
+                <small class="text-muted d-block mt-2">Supported formats: JPG, PNG, GIF (Max 2MB)</small>
               </div>
             </div>
           </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          <button type="submit" class="btn btn-primary">Save User</button>
-        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary">Save User</button>
+      </div>
       </form>
     </div>
   </div>
@@ -203,7 +179,7 @@ if (isset($_GET['del_id'])) {
 <div class="modal fade" id="editUserModal" tabindex="-1" role="dialog" aria-labelledby="editUserModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
-      <form id="editUserForm" action="user_action.php" method="post" enctype="multipart/form-data">
+      <form id="editUserForm" action="<?= base_url(); ?>users/edit/<?= $user['user_id']; ?>" method="post" enctype="multipart/form-data">
         <input type="hidden" name="action" value="edit">
         <input type="hidden" id="editId" name="id">
 
@@ -234,13 +210,17 @@ if (isset($_GET['del_id'])) {
             </select>
           </div>
           <div class="form-group">
-            <label>Profile Image</label>
-            <div id="editDragDropArea" class="drag-drop-area">
-              <p>Drag & drop your image here or click to browse</p>
-              <input type="file" id="editImageInput" name="image" accept="image/*" style="display: none;">
-              <div id="editImagePreviewContainer">
-                <img id="editImagePreview" class="preview-image" src="#" alt="Preview" style="display: none;">
+            <label class="form-label">Profile Image</label>
+            <div id="editDragDropArea" class="drag-drop-area border-2 border-dashed rounded p-4 text-center position-relative">
+              <p class="mb-2">Drag & drop your image here or <span class="text-primary fw-bold">click to browse</span></p>
+              <input type="file" id="editImageInput" name="image" accept="image/*" class="position-absolute top-0 start-0 w-100 h-100 opacity-0 cursor-pointer">
+              <div id="editImagePreviewContainer" class="mt-3 text-center d-none">
+                <img id="editImagePreview" class="preview-image img-thumbnail" src="#" alt="Preview" style="max-height: 150px;">
+                <button type="button" class="btn btn-sm btn-danger mt-2" id="editRemoveImageBtn">
+                  <i class="fas fa-times me-1"></i>Remove
+                </button>
               </div>
+              <small class="text-muted d-block mt-2">Supported formats: JPG, PNG, GIF (Max 2MB)</small>
               <input type="hidden" id="currentImage" name="current_image">
             </div>
           </div>
@@ -255,185 +235,8 @@ if (isset($_GET['del_id'])) {
 </div>
 
 <!-- jQuery, Bootstrap JS -->
-<script src="assets/js/jquery-3.5.1.min.js"></script>
-<script src="assets/js/bootstrap.bundle.min.js"></script>
+<!-- <script src="assets/js/jquery-3.5.1.min.js"></script>
+<script src="assets/js/bootstrap.bundle.min.js"></script> -->
 
 <!-- Custom JS -->
-<script>
-  $(document).ready(function() {
-    // Handle edit button click
-    $('.edit-user').click(function() {
-      var id = $(this).data('id');
-      var username = $(this).data('username');
-      var name = $(this).data('name');
-      var level = $(this).data('level');
-      var img = $(this).data('img');
-
-      $('#editId').val(id);
-      $('#editUsername').val(username);
-      $('#editName').val(name);
-      $('#editLevel').val(level);
-      $('#currentImage').val(img);
-
-      if (img) {
-        $('#editImagePreview').attr('src', '../../assets/img/profil/' + img).show();
-        $('#editImagePreviewContainer').show();
-      } else {
-        $('#editImagePreview').hide();
-      }
-
-      $(document).ready(function() {
-        $(document).on('click', '.edit-user', function() {
-          var id = $(this).data('id');
-          var username = $(this).data('username');
-          var name = $(this).data('name');
-
-          $('#editId').val(id);
-          $('#editUsername').val(username);
-          $('#editName').val(name);
-
-          // Jika menggunakan Bootstrap 5
-          var editModal = new bootstrap.Modal(document.getElementById('editUserModal'));
-          editModal.show();
-        });
-      });
-    });
-
-    // Drag and drop functionality for add form
-    var dragDropArea = document.getElementById('dragDropArea');
-    var imageInput = document.getElementById('imageInput');
-    var imagePreview = document.getElementById('imagePreview');
-    var imagePreviewContainer = document.getElementById('imagePreviewContainer');
-
-    // Prevent default drag behaviors
-    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-      dragDropArea.addEventListener(eventName, preventDefaults, false);
-    });
-
-    function preventDefaults(e) {
-      e.preventDefault();
-      e.stopPropagation();
-    }
-
-    // Highlight drop area when item is dragged over it
-    ['dragenter', 'dragover'].forEach(eventName => {
-      dragDropArea.addEventListener(eventName, highlight, false);
-    });
-
-    ['dragleave', 'drop'].forEach(eventName => {
-      dragDropArea.addEventListener(eventName, unhighlight, false);
-    });
-
-    function highlight() {
-      dragDropArea.classList.add('active');
-    }
-
-    function unhighlight() {
-      dragDropArea.classList.remove('active');
-    }
-
-    // Handle dropped files
-    dragDropArea.addEventListener('drop', handleDrop, false);
-
-    function handleDrop(e) {
-      var dt = e.dataTransfer;
-      var files = dt.files;
-      handleFiles(files);
-    }
-
-    // Handle click to browse
-    dragDropArea.addEventListener('click', function() {
-      imageInput.click();
-    });
-
-    imageInput.addEventListener('change', function() {
-      handleFiles(this.files);
-    });
-
-    function handleFiles(files) {
-      if (files.length > 0) {
-        var file = files[0];
-        if (file.type.match('image.*')) {
-          var reader = new FileReader();
-          reader.onload = function(e) {
-            imagePreview.src = e.target.result;
-            imagePreviewContainer.style.display = 'block';
-          };
-          reader.readAsDataURL(file);
-        }
-      }
-    }
-
-    // Drag and drop functionality for edit form
-    var editDragDropArea = document.getElementById('editDragDropArea');
-    var editImageInput = document.getElementById('editImageInput');
-    var editImagePreview = document.getElementById('editImagePreview');
-    var editImagePreviewContainer = document.getElementById('editImagePreviewContainer');
-
-    // Prevent default drag behaviors
-    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-      editDragDropArea.addEventListener(eventName, preventDefaults, false);
-    });
-
-    // Highlight drop area when item is dragged over it
-    ['dragenter', 'dragover'].forEach(eventName => {
-      editDragDropArea.addEventListener(eventName, highlightEdit, false);
-    });
-
-    ['dragleave', 'drop'].forEach(eventName => {
-      editDragDropArea.addEventListener(eventName, unhighlightEdit, false);
-    });
-
-    function highlightEdit() {
-      editDragDropArea.classList.add('active');
-    }
-
-    function unhighlightEdit() {
-      editDragDropArea.classList.remove('active');
-    }
-
-    // Handle dropped files
-    editDragDropArea.addEventListener('drop', handleEditDrop, false);
-
-    function handleEditDrop(e) {
-      var dt = e.dataTransfer;
-      var files = dt.files;
-      handleEditFiles(files);
-    }
-
-    // Handle click to browse
-    editDragDropArea.addEventListener('click', function() {
-      editImageInput.click();
-    });
-
-    editImageInput.addEventListener('change', function() {
-      handleEditFiles(this.files);
-    });
-
-    function handleEditFiles(files) {
-      if (files.length > 0) {
-        var file = files[0];
-        if (file.type.match('image.*')) {
-          var reader = new FileReader();
-          reader.onload = function(e) {
-            editImagePreview.src = e.target.result;
-            editImagePreview.style.display = 'block';
-          };
-          reader.readAsDataURL(file);
-        }
-      }
-    }
-
-    // Reset add form when modal is closed
-    $('#addUserModal').on('hidden.bs.modal', function() {
-      $('#addUserForm')[0].reset();
-      imagePreviewContainer.style.display = 'none';
-    });
-
-    // Reset edit form when modal is closed
-    $('#editUserModal').on('hidden.bs.modal', function() {
-      $('#editUserForm')[0].reset();
-      editImagePreview.style.display = 'none';
-    });
-  });
-</script>
+<script src="<?= base_url(); ?>modul/users/js/users.js"></script>
