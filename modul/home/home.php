@@ -1,5 +1,11 @@
-<?php
-?>
+<!-- /**
+ * @author [RadevankaProject]
+ * @email radevankaproject@mail.com]
+ * @create date 2025-05-12 04:47:54
+ * @modify date 2025-05-12 04:47:54
+ * @desc [description]
+ */ -->
+
 <!-- Page Title Area -->
 <title>Dashboard</title>
 <div class="row page-title clearfix">
