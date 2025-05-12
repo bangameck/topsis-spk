@@ -22,7 +22,7 @@ switch ($action) {
     handleAddUser();
     break;
   case 'edit':
-    // handleEditUser($id);
+    handleEditUser($id);
     break;
   case 'delete':
     handleDeleteUser($id);
@@ -37,12 +37,14 @@ function handleAddUser()
 {
   global $db;
 
+  //cek method (tidak diizinkan selain POST)
   if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     toastNotif('error', 'Method tidak sesuai!');
     header("Location: " . base_url('users'));
     exit();
   }
 
+  //cek CSRF token
   if (!check_csrf_token($_POST['csrf_token'] ?? '')) {
     toastNotif('error', 'Token CSRF tidak valid.');
     header("Location: " . base_url('users'));
@@ -85,6 +87,86 @@ function handleAddUser()
     toastNotif('error', 'Gagal menambahkan username' . $db->error);
   }
   $stmt->close();
+  header("Location: " . base_url('users'));
+  exit();
+}
+
+#Edit User
+function handleEditUser($id)
+{
+  global $db;
+
+  //cek method (tidak diizinkan selain POST)
+  if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    toastNotif('error', 'Method tidak sesuai!');
+    header("Location: " . base_url('users'));
+    exit();
+  }
+
+  //cek CSRF token
+  if (!check_csrf_token($_POST['csrf_token'] ?? '')) {
+    toastNotif('error', 'Token CSRF tidak valid.');
+    header("Location: " . base_url('users'));
+    exit();
+  }
+
+  $username = $db->real_escape_string($_POST['username']);
+  $name = $db->real_escape_string($_POST['name']);
+  $level = (int)$_POST['level'];
+  $password = $_POST['password'] ?? '';
+  $currentImage = $db->real_escape_string($_POST['current_image'] ?? '');
+
+  //cek jika username sudah ada
+  $stmt = $db->prepare("SELECT user_id FROM users WHERE username = ? AND user_id != ?");
+  $stmt->bind_param("si", $username, $id);
+  $stmt->execute();
+  if ($stmt->get_result()->num_rows > 0) {
+    toastNotif('error', 'Username sudah ada!');
+    header("Location: " . base_url('users'));
+    exit();
+  }
+  $stmt->close();
+
+  //handel upload image
+  $imgFilename = handleFileUpload();
+  if ($imgFilename && $currentImage) {
+    //hapus image lama
+    deleteProfileImage($currentImage);
+  }
+  $finalImage = $imgFilename ?: $currentImage;
+
+  //prepare password
+  $passwordUpdate = '';
+  if (!empty($password)) {
+    $passwordHash = password_hash($password, PASSWORD_DEFAULT);
+    $passwordUpdate = ", password  = ?";
+  }
+
+  //update user
+  $query = "UPDATE users SET 
+            username = ?,
+            name = ?,
+            level = ?,
+            img = ?,
+            updated_at = NOW()
+            {$passwordUpdate}
+            WHERE user_id = ?";
+  $stmt = $db->prepare($query);
+
+  if (!empty($passwordUpdate)) {
+    $stmt->bind_param("ssissi", $username, $name, $level, $finalImage, $passwordHash, $id);
+  } else {
+    $stmt->bind_param("ssisi", $username, $name, $level, $finalImage, $id);
+  }
+
+  if ($stmt->execute()) {
+    toastNotif('success', 'Data berhasil di update.');
+  } else {
+    toastNotif('error', 'Data gagal di update' . $db->error);
+  }
+
+  $stmt->close();
+
   header("Location: " . base_url('users'));
   exit();
 }

@@ -1,3 +1,31 @@
+// Fungsi real-time untuk memfilter username input
+function filterUsernameInput(input) {
+    // Hilangkan spasi dan karakter tidak valid, ubah jadi huruf kecil
+    input.value = input.value.toLowerCase().replace(/[^a-z0-9_-]/g, '');
+}
+
+// Fungsi untuk mencegah spasi pada password
+function filterPasswordInput(input) {
+    input.value = input.value.replace(/\s/g, '');
+}
+
+// Terapkan ke input username dan password (add + edit)
+document.getElementById('username').addEventListener('input', function() {
+    filterUsernameInput(this);
+});
+
+document.getElementById('editUsername').addEventListener('input', function() {
+    filterUsernameInput(this);
+});
+
+document.getElementById('password').addEventListener('input', function() {
+    filterPasswordInput(this);
+});
+
+document.getElementById('editPassword').addEventListener('input', function() {
+    filterPasswordInput(this);
+});
+
 document.addEventListener('DOMContentLoaded', function() {
     // Inisialisasi modal edit
     const editModal = new bootstrap.Modal(document.getElementById('editUserModal'));
@@ -24,7 +52,8 @@ document.addEventListener('DOMContentLoaded', function() {
             const editImagePreviewContainer = document.getElementById('editImagePreviewContainer');
 
             if (img && img !== 'default.png') {
-                editImagePreview.src = 'assets/img/profile/' + img;
+                // console.log("Image Path:", '/topsis-skripsi/assets/img/profile/' + img);
+                editImagePreview.src = '/topsis-skripsi/assets/img/profile/' + img;
                 editImagePreview.style.display = 'block';
                 editImagePreviewContainer.style.display = 'block';
             } else {
@@ -241,17 +270,6 @@ initDragDrop(
     'editRemoveImageBtn'
 );
 
-// Fungsi untuk menampilkan gambar yang sudah ada saat edit
-$(document).on('click', '.edit-user', function() {
-    const img = $(this).data('img');
-    if (img && img !== 'default.png') {
-        $('#editImagePreview').attr('src', 'assets/img/profile/' + img);
-        $('#editImagePreviewContainer').removeClass('d-none');
-    } else {
-        $('#editImagePreviewContainer').addClass('d-none');
-    }
-});
-
 // Reset add form when modal is closed
 $('#addUserModal').on('hidden.bs.modal', function() {
     $('#addUserForm')[0].reset();
@@ -261,5 +279,5 @@ $('#addUserModal').on('hidden.bs.modal', function() {
 // Reset edit form when modal is closed
 $('#editUserModal').on('hidden.bs.modal', function() {
     $('#editUserForm')[0].reset();
-    editImagePreview.style.display = 'none';
+    document.getElementById('editImagePreviewContainer').classList.add('d-none');
 });

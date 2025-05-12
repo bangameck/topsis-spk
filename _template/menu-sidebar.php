@@ -5,7 +5,7 @@
     <ul class="list-unstyled sub-menu">
       <li><a href="<?= base_url(); ?>users">Users</a>
       </li>
-      <li><a href="page-profile.html">Kriteria</a>
+      <li><a href="<?= base_url(); ?>criteria">Kriteria</a>
       </li>
       <li><a href="page-profile.html">Kriteria Alternatif</a>
       </li>

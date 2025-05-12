@@ -1,0 +1,72 @@
+Array
+(
+    [action] => edit
+    [id] => 10
+    [csrf_token] => 825f3096976b4a1094280e2377860f666d034dec2329943e11c0f319e52775c8
+    [username] => moon
+    [password] => moon
+    [name] => Talking to the Moon
+    [level] => 2
+    [current_image] => 68221fe7783d6.jpg
+)
+Array
+(
+    [image] => Array
+        (
+            [name] => 
+            [full_path] => 
+            [type] => 
+            [tmp_name] => 
+            [error] => 4
+            [size] => 0
+        )
+
+)
+Array
+(
+    [action] => edit
+    [id] => 10
+    [csrf_token] => 825f3096976b4a1094280e2377860f666d034dec2329943e11c0f319e52775c8
+    [username] => Moon
+    [password] => moon
+    [name] => Moon
+    [level] => 2
+    [current_image] => 68221fe7783d6.jpg
+)
+Array
+(
+    [image] => Array
+        (
+            [name] => 185978-3840x2160-desktop-4k-moon-background-photo.jpg
+            [full_path] => 185978-3840x2160-desktop-4k-moon-background-photo.jpg
+            [type] => image/jpeg
+            [tmp_name] => /tmp/phporm53r19tfut5YimwlK
+            [error] => 0
+            [size] => 572603
+        )
+
+)
+Array
+(
+    [action] => edit
+    [id] => 10
+    [csrf_token] => 825f3096976b4a1094280e2377860f666d034dec2329943e11c0f319e52775c8
+    [username] => Moon
+    [password] => moon
+    [name] => Moon
+    [level] => 2
+    [current_image] => 68221fe7783d6.jpg
+)
+Array
+(
+    [image] => Array
+        (
+            [name] => 185978-3840x2160-desktop-4k-moon-background-photo.jpg
+            [full_path] => 185978-3840x2160-desktop-4k-moon-background-photo.jpg
+            [type] => image/jpeg
+            [tmp_name] => /tmp/phphk1josb1qac67Km02Uc
+            [error] => 0
+            [size] => 572603
+        )
+
+)

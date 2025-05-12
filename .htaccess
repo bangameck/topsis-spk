@@ -24,5 +24,10 @@ RewriteRule ^users$ index.php?m=users [L,QSA]
 RewriteRule ^users/add$ modul/users/users_action.php?action=add [L,QSA]
 RewriteRule ^users/edit/([0-9]+)$ modul/users/users_action.php?action=edit&id=$1 [L,QSA]
 RewriteRule ^users/delete/([0-9]+)$ modul/users/users_action.php?action=delete&id=$1 [L,QSA]
+
+#halamanKriteria
+RewriteRule ^criteria$ index.php?m=criteria [L,QSA]
+
+
 Options All -Indexes
 </IfModule>

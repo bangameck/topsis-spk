@@ -1,2 +1,2 @@
-<footer class="footer"><span class="heading-font-family">Copyright @ 2017. All rights reserved BonVue Admin by Unifato</span>
+<footer class="footer"><span class="heading-font-family">Copyright @ 2025. All rights reserved TOPSIS App by Rita</span>
 </footer>

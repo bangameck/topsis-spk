@@ -1,7 +1,7 @@
 <?php
-// error_reporting(E_ALL);
-// ini_set('display_errors', 1);
-// ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
 require_once __DIR__ . '/../../_func/controlWeb.php';
 
 if ($_SESSION['level'] != 1) {
@@ -13,18 +13,18 @@ if ($_SESSION['level'] != 1) {
 }
 ?>
 
-<title>Halaman Users</title>
+<title>Halaman Kriteria</title>
 <div class="row page-title clearfix">
   <div class="page-title-left">
-    <h6 class="page-title-heading mr-0 mr-r-5">Users</h6>
-    <p class="page-title-description mr-0 d-none d-md-inline-block">Halaman Users</p>
+    <h6 class="page-title-heading mr-0 mr-r-5">Kriteria</h6>
+    <p class="page-title-description mr-0 d-none d-md-inline-block">Halaman Utama Kriteria</p>
   </div>
   <!-- /.page-title-left -->
   <div class="page-title-right d-none d-sm-inline-flex">
     <ol class="breadcrumb">
       <li class="breadcrumb-item"><a href="<?= base_url(); ?>">Dashboard</a>
       </li>
-      <li class="breadcrumb-item active">users</li>
+      <li class="breadcrumb-item active">kriteria</li>
     </ol>
 
   </div>
@@ -38,7 +38,7 @@ if ($_SESSION['level'] != 1) {
           <h5 class="mb-0"></h5>
           <div>
             <button class="btn btn-primary" data-toggle="modal" data-target="#addUserModal">
-              <i class="fas fa-user-plus mr-1"></i> Add User
+              <i class="fas fa-user-plus mr-1"></i> Kriteria
             </button>
           </div>
         </div>
@@ -49,45 +49,36 @@ if ($_SESSION['level'] != 1) {
             <thead class="thead-dark">
               <tr>
                 <th>#</th>
-                <th>Username</th>
-                <th>Name</th>
-                <th>Level</th>
-                <th>Profile Image</th>
-                <th>Created At</th>
+                <th>ID</th>
+                <th>Nama</th>
+                <th>Jenis</th>
+                <th>Value</th>
+                <th>Keterangan</th>
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody>
               <?php
               $offset = 0;
-              $query = $db->query("SELECT * FROM users");
-              $users = $query->fetch_all(MYSQLI_ASSOC);
-              if (count($users) > 0): ?>
-                <?php foreach ($users as $index => $user): ?>
+              $query = $db->query("SELECT * FROM criteria");
+              $criterias = $query->fetch_all(MYSQLI_ASSOC);
+              if (count($criterias) > 0): ?>
+                <?php foreach ($criterias as $index => $criteria): ?>
                   <tr>
                     <td><?php echo $offset + $index + 1; ?></td>
-                    <td><?php echo htmlspecialchars($user['username']); ?></td>
-                    <td><?php echo htmlspecialchars($user['name']); ?></td>
+                    <td><?php echo htmlspecialchars($criteria['criteria_id']); ?></td>
+                    <td><?php echo htmlspecialchars($criteria['criteria_name']); ?></td>
                     <td>
                       <?php
-                      if ($user['level'] == 1) {
-                        echo '<span class="badge badge-primary">Admin</span>';
+                      if ($criteria['criteria_type'] == 'cost') {
+                        echo '<span class="badge badge-primary">Cost</span>';
                       } else {
-                        echo '<span class="badge badge-secondary">Masyarakat</span>';
+                        echo '<span class="badge badge-success">Benefit</span>';
                       }
                       ?>
                     </td>
-                    <td>
-                      <?php if ($user['img']) {
-                        $img = $user['img'];
-                      } else {
-                        $img = 'default.png';
-                      } ?>
-                      <figure class="thumb-xs2">
-                        <img class="rounded-circle" src="assets/img/profile/<?= $img; ?>" alt="">
-                      </figure>
-                    </td>
-                    <td><?php echo date('d M Y H:i', strtotime($user['created_at'])); ?></td>
+                    <td><?= htmlspecialchars($criteria['criteria_value']) ?></td>
+                    <td><?= htmlspecialchars($criteria['criteria_information']); ?></td>
                     <td>
                       <button class="btn btn-sm btn-warning edit-user"
                         data-toggle="modal"
@@ -165,12 +156,12 @@ if ($_SESSION['level'] != 1) {
               </div>
             </div>
           </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-primary">Save User</button>
-          </div>
-        </form>
       </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary">Save User</button>
+      </div>
+      </form>
     </div>
   </div>
 
@@ -233,10 +224,3 @@ if ($_SESSION['level'] != 1) {
       </div>
     </div>
   </div>
-
-  <!-- jQuery, Bootstrap JS -->
-  <!-- <script src="assets/js/jquery-3.5.1.min.js"></script>
-<script src="assets/js/bootstrap.bundle.min.js"></script> -->
-
-  <!-- Custom JS -->
-  <script src="<?= base_url(); ?>modul/users/js/users.js"></script>
