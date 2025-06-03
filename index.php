@@ -6,7 +6,16 @@
  * @desc [description]
  */ -->
 
-<?php include '_func/controlWeb.php' ?>
+<?php
+include_once __DIR__ . '/config/controlWeb.php';
+include_once __DIR__ . '/route/web.php';
+
+// --- Tambahkan baris ini untuk debugging ---
+echo '';
+echo '';
+echo '';
+// --- Akhir baris debugging ---
+?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -38,7 +47,7 @@
       <!-- /.site-sidebar -->
       <main class="main-wrapper clearfix">
         <!-- ContentWeb -->
-        <?php modul($_GET['m']) ?>
+        <?php routes($_GET['m'], $_GET['r']) ?>
         <!-- endContentWeb -->
       </main>
     </div>

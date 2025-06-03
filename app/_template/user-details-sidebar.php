@@ -23,7 +23,7 @@
 
       <div class="d-inline-block pos-relative mr-b-10">
         <figure class="avatar thumb-sm2 mr-b-0 user--online">
-          <img src="assets/img/profile/<?= $img; ?>" class="rounded-circle" alt="">
+          <img src="<?= base_url(); ?>assets/img/profile/<?= $img; ?>" class="rounded-circle" alt="">
         </figure><a href="page-profile.html" class="text-muted side-user-link"><i class="feather feather-settings list-icon"></i></a>
       </div>
       <!-- /.d-inline-block -->

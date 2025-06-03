@@ -11,19 +11,25 @@ RewriteEngine on
 RewriteCond %{HTTPS} off
 RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
+RewriteBase /topsis-skripsi/
 # ---- Isi URL Custom ---
-
 #DashboardHome or Index
+RewriteRule ^$ index.php [L]
 RewriteRule ^home$ index.php [L]
-RewriteRule ^login$ modul/login.php [L]
-RewriteRule ^out$ modul/logout.php [L]
 
-#HalamanUsers
-RewriteRule ^users$ index.php?m=users [L,QSA]
+#Login/Logout
+RewriteRule ^login$ app/views/login.php [L]
+RewriteRule ^out$ app/views/logout.php [L]
+
+#HalamanUsers[Add,Edit]
+RewriteRule ^users$ index.php?m=users&r=users [L,QSA]
+RewriteRule ^users/add$ index.php?m=users&r=add [L,QSA]
+RewriteRule ^users/edit/([0-9]+)$ index.php?m=users&r=edit&id=$1 [L,QSA]
+
 # Users actions
-RewriteRule ^users/add$ modul/users/users_action.php?action=add [L,QSA]
-RewriteRule ^users/edit/([0-9]+)$ modul/users/users_action.php?action=edit&id=$1 [L,QSA]
-RewriteRule ^users/delete/([0-9]+)$ modul/users/users_action.php?action=delete&id=$1 [L,QSA]
+RewriteRule ^users/actionAdd$ app/controllers/UsersControllers.php?action=add [L,QSA]
+RewriteRule ^users/actionEdit/([0-9]+)$ app/controllers/UsersControllers.php?action=edit&id=$1 [L,QSA]
+RewriteRule ^users/delete/([0-9]+)$ app/controllers/UsersControllers.php?action=delete&id=$1 [L,QSA]
 
 #halamanKriteria
 RewriteRule ^criteria$ index.php?m=criteria [L,QSA]

@@ -9,10 +9,10 @@
 
 <?php
 #startSession and Error Reporting
-// error_reporting(E_ALL);
-// ini_set('display_errors', 1);
-error_reporting(E_ALL ^ (E_NOTICE | E_WARNING));
-error_reporting(0);
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+// error_reporting(E_ALL ^ (E_NOTICE | E_WARNING));
+// error_reporting(0);
 session_start();
 ini_set('max_execution_time', 3600);
 date_default_timezone_set('Asia/Jakarta');
@@ -62,6 +62,7 @@ function displaySessionMessages()
   }
 }
 
+#notifToastr
 function toastNotif($type, $message)
 {
   $_SESSION['toast_notifications'][] = [
@@ -70,33 +71,21 @@ function toastNotif($type, $message)
   ];
 }
 
-#Modul Control
-function modul($m)
-{
-  global $db;
-  global $base_url;
-  if (empty($m)) {
-    include "modul/home/home.php";
-  } else {
-    return include "modul/$m/$m.php";
-  }
-}
-
 #Template Website
 function template($nameFile)
 {
   if ($nameFile == 'head') {
-    include '_template/head.php';
+    include 'app/_template/head.php';
   } elseif ($nameFile == 'navbar') {
-    include '_template/navbar.php';
+    include 'app/_template/navbar.php';
   } elseif ($nameFile == 'user-details') {
-    include '_template/user-details-sidebar.php';
+    include 'app/_template/user-details-sidebar.php';
   } elseif ($nameFile == 'menu') {
-    include '_template/menu-sidebar.php';
+    include 'app/_template/menu-sidebar.php';
   } elseif ($nameFile == 'footer') {
-    include '_template/footer.php';
+    include 'app/_template/footer.php';
   } elseif ($nameFile == 'js') {
-    include '_template/js.php';
+    include 'app/_template/js.php';
   }
 }
 

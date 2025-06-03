@@ -1,5 +1,5 @@
 <?php
-include '../_func/controlWeb.php';
+include_once __DIR__ . '/../../config/controlWeb.php';
 
 if (isset($_POST['login'])) {
   if (!check_csrf_token($_POST['csrf_token'] ?? '')) {

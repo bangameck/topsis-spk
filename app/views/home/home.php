@@ -87,6 +87,9 @@
                   <?php endif; ?>
                 </tbody>
               </table>
+              <?php if (!empty($_SESSION['username'])) : ?>
+                <span><a href="<?= base_url(); ?>criteria">Klik selengkapnya ></a></span>
+              <?php endif ?>
             </div>
           </div>
         </div>
