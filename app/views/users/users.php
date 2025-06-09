@@ -1,7 +1,4 @@
 <?php
-// error_reporting(E_ALL);
-// ini_set('display_errors', 1);
-// ini_set('display_startup_errors', 1);
 require_once __DIR__ . '/../../../config/controlWeb.php';
 
 if ($_SESSION['level'] != 1) {
@@ -45,8 +42,8 @@ if ($_SESSION['level'] != 1) {
 
         <!-- Users Table -->
         <div class="widget-body clearfix">
-          <table class="table table-striped table-responsive" data-toggle="datatables" data-plugin-options='{"searching": true}'>
-            <thead>
+          <table id="tableUsers" class="hover">
+            <thead class="text-center">
               <tr>
                 <th>#</th>
                 <th>Username</th>
@@ -59,13 +56,13 @@ if ($_SESSION['level'] != 1) {
             </thead>
             <tbody>
               <?php
-              $offset = 0;
-              $query = $db->query("SELECT * FROM users");
-              $users = $query->fetch_all(MYSQLI_ASSOC);
-              if (count($users) > 0): ?>
-                <?php foreach ($users as $index => $user): ?>
+              $no = 1;
+              $sql = "SELECT * FROM users";
+              $result = $db->query($sql);
+              if ($result->num_rows > 0): ?>
+                <?php while ($user = $result->fetch_assoc()): ?>
                   <tr>
-                    <td><?php echo $offset + $index + 1; ?></td>
+                    <td><?php echo $no++; ?></td>
                     <td><?php echo htmlspecialchars($user['username']); ?></td>
                     <td><?php echo htmlspecialchars($user['name']); ?></td>
                     <td>
@@ -77,7 +74,7 @@ if ($_SESSION['level'] != 1) {
                       }
                       ?>
                     </td>
-                    <td>
+                    <td class="text-center">
                       <?php if ($user['img']) {
                         $img = $user['img'];
                       } else {
@@ -90,15 +87,14 @@ if ($_SESSION['level'] != 1) {
                     <td><?php echo date('d M Y H:i', strtotime($user['created_at'])); ?></td>
                     <td>
                       <a class="btn btn-sm btn-warning edit-user" href="<?= base_url(); ?>users/edit/<?= $user['user_id']; ?>">
-
                         <i class="fa fa-edit"></i> Edit
                       </a>
-                      <a href="<?= base_url(); ?>users/delete/<?= $user['user_id']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this user?')">
+                      <a href="<?= base_url(); ?>users/delete/<?= $user['user_id']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Apakah kamu yakin ingin menghapus user ini?')">
                         <i class="fa fa-trash"></i> Delete
                       </a>
                     </td>
                   </tr>
-                <?php endforeach; ?>
+                <?php endwhile; ?>
               <?php else: ?>
                 <tr>
                   <td colspan="7" class="text-center">No users found</td>
@@ -110,5 +106,6 @@ if ($_SESSION['level'] != 1) {
       </div>
     </div>
   </div>
+  <?php include_once __DIR__ . "/../../../config/jstable.php" ?>
   <!-- Custom JS -->
   <script src="<?= base_url(); ?>app/views/users/js/users.js"></script>

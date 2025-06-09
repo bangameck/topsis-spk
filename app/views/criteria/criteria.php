@@ -2,7 +2,7 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
-require_once __DIR__ . '/../../_func/controlWeb.php';
+require_once __DIR__ . '/../../../config/controlWeb.php';
 ?>
 
 <title>Halaman Kriteria</title>
@@ -30,38 +30,38 @@ require_once __DIR__ . '/../../_func/controlWeb.php';
           <h5 class="mb-0"></h5>
           <div>
             <?php if ($_SESSION['level'] == 1) : ?>
-              <button class="btn btn-primary" data-toggle="modal" data-target="#addUserModal">
-                <i class="fas fa-user-plus mr-1"></i> Kriteria
-              </button>
+              <a href="<?= base_url(); ?>criteria/add" class="btn btn-primary">
+                <i class="fas fa-plus mr-1"></i> Kriteria
+              </a>
             <?php endif ?>
           </div>
         </div>
 
-        <!-- Users Table -->
+        <!-- Criteria Table -->
         <div class="widget-body clearfix">
-          <table class="table table-striped table-responsive" data-toggle="datatables" data-plugin-options='{"searching": true}'>
+          <table id="tableCriteria" class="hover">
             <thead class="thead-dark">
               <tr>
                 <th>#</th>
                 <th>ID</th>
                 <th>Nama</th>
                 <th>Jenis</th>
-                <th>Value</th>
+                <th style="width: 10%;">Bobot (%)</th>
                 <th>Keterangan</th>
                 <?php if ($_SESSION['level'] == 1) : ?>
-                  <th>Actions</th>
+                  <th style="width: 20%;">Actions</th>
                 <?php endif ?>
               </tr>
             </thead>
             <tbody>
               <?php
-              $offset = 0;
-              $query = $db->query("SELECT * FROM criteria");
-              $criterias = $query->fetch_all(MYSQLI_ASSOC);
-              if (count($criterias) > 0): ?>
-                <?php foreach ($criterias as $index => $criteria): ?>
+              $no = 1;
+              $sql = "SELECT * FROM criteria";
+              $result = $db->query($sql);
+              if ($result->num_rows > 0): ?>
+                <?php while ($criteria = $result->fetch_assoc()): ?>
                   <tr>
-                    <td><?php echo $offset + $index + 1; ?></td>
+                    <td><?php echo $no++ ?></td>
                     <td><?php echo htmlspecialchars($criteria['criteria_id']); ?></td>
                     <td><?php echo htmlspecialchars($criteria['criteria_name']); ?></td>
                     <td>
@@ -73,30 +73,23 @@ require_once __DIR__ . '/../../_func/controlWeb.php';
                       }
                       ?>
                     </td>
-                    <td><?= htmlspecialchars($criteria['criteria_value']) ?></td>
+                    <td><b><?= htmlspecialchars($criteria['criteria_value']) ?></b></td>
                     <td><?= htmlspecialchars($criteria['criteria_information']); ?></td>
                     <?php if ($_SESSION['level'] == 1) : ?>
                       <td>
-                        <button class="btn btn-sm btn-warning edit-user"
-                          data-toggle="modal"
-                          data-target="#editUserModal"
-                          data-id="<?= $user['user_id']; ?>"
-                          data-username="<?= htmlspecialchars($user['username']); ?>"
-                          data-name="<?= htmlspecialchars($user['name']); ?>"
-                          data-level="<?= $user['level']; ?>"
-                          data-img="<?= $user['img'] ? htmlspecialchars($user['img']) : 'default.png'; ?>">
+                        <a class="btn btn-sm btn-warning edit-user" href="<?= base_url(); ?>criteria/edit/<?= $criteria['criteria_id']; ?>">
                           <i class="fa fa-edit"></i> Edit
-                        </button>
-                        <a href="<?= base_url(); ?>users/delete/<?= $user['user_id']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this user?')">
+                        </a>
+                        <a href="<?= base_url(); ?>criteria/delete/<?= $criteria['criteria_id']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Apakah kamu yakin menghapus kriteria ini?')">
                           <i class="fa fa-trash"></i> Delete
                         </a>
                       </td>
                     <?php endif ?>
                   </tr>
-                <?php endforeach; ?>
+                <?php endwhile; ?>
               <?php else: ?>
                 <tr>
-                  <td colspan="7" class="text-center">No users found</td>
+                  <td colspan="7" class="text-center">No criterias found</td>
                 </tr>
               <?php endif; ?>
             </tbody>
@@ -106,3 +99,7 @@ require_once __DIR__ . '/../../_func/controlWeb.php';
     </div>
   </div>
 </div>
+<?php include_once __DIR__ . '/../../../config/jstable.php'; ?>
+
+<!-- JS -->
+<script src="<?= base_url(); ?>app/views/criteria/js/criteria.js"></script>

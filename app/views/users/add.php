@@ -1,4 +1,4 @@
-<title>Halaman Users</title>
+<title>Halaman Tambah Users</title>
 <div class="row page-title clearfix">
   <div class="page-title-left">
     <h6 class="page-title-heading mr-0 mr-r-5">Users</h6>
@@ -62,6 +62,10 @@
                 <p class="text-muted mb-2">Seret dan lepas gambar di sini, atau</p>
                 <button type="button" class="btn btn-primary btn-sm" id="browseImageButton">Pilih Gambar</button>
                 <img id="imagePreview" class="preview-image mt-3" src="#" alt="Image Preview" style="display: none;">
+                <div id="fileInfo" class="mt-2 text-center" style="display: none;">
+                  <p class="mb-0 text-muted" id="fileName"></p>
+                  <p class="mb-0 text-muted" id="fileSize"></p>
+                </div>
                 <i class="feather feather-x-circle clear-image-icon" style="display: none;" title="Hapus Gambar"></i>
               </div>
             </div>

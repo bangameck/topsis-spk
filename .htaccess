@@ -26,14 +26,34 @@ RewriteRule ^users$ index.php?m=users&r=users [L,QSA]
 RewriteRule ^users/add$ index.php?m=users&r=add [L,QSA]
 RewriteRule ^users/edit/([0-9]+)$ index.php?m=users&r=edit&id=$1 [L,QSA]
 
-# Users actions
+#UsersActions
 RewriteRule ^users/actionAdd$ app/controllers/UsersControllers.php?action=add [L,QSA]
 RewriteRule ^users/actionEdit/([0-9]+)$ app/controllers/UsersControllers.php?action=edit&id=$1 [L,QSA]
 RewriteRule ^users/delete/([0-9]+)$ app/controllers/UsersControllers.php?action=delete&id=$1 [L,QSA]
 
 #halamanKriteria
-RewriteRule ^criteria$ index.php?m=criteria [L,QSA]
+RewriteRule ^criteria$ index.php?m=criteria&r=criteria [L,QSA]
+RewriteRule ^criteria/add$ index.php?m=criteria&r=add [L,QSA]
+RewriteRule ^criteria/edit/([a-zA-Z0-9-z\-\_]+)$ index.php?m=criteria&r=edit&id=$1 [L,QSA]
 
+#CriteriasActions
+RewriteRule ^criteria/actionAdd$ app/controllers/CriteriasControllers.php?action=add [L,QSA]
+RewriteRule ^criteria/actionEdit/([a-zA-Z0-9-z\-\_]+)$ app/controllers/CriteriasControllers.php?action=edit&id=$1 [L,QSA]
+RewriteRule ^criteria/delete/([a-zA-Z0-9-z\-\_]+)$ app/controllers/CriteriasControllers.php?action=delete&id=$1 [L,QSA]
+
+# --- Tambahan untuk Halaman Alternatif ---
+# Halaman Input Alternatif
+RewriteRule ^alternative/add$ index.php?m=alternative&r=add [L,QSA]
+
+# Actions untuk Alternatif
+RewriteRule ^alternative/save$ app/controllers/AlternativeControllers.php?action=save [L,QSA]
+
+#Alternative List
+RewriteRule ^alternative$ index.php?m=alternative&r=list [L,QSA]
+
+# Halaman Hasil Perhitungan
+RewriteRule ^topsis/results$ index.php?m=topsis&r=results [L,QSA]
+RewriteRule ^fullResults$ index.php?m=topsis&r=fullResults [L,QSA]
 
 Options All -Indexes
 </IfModule>

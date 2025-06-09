@@ -8,6 +8,8 @@
 
 <?php
 include_once __DIR__ . '/config/controlWeb.php';
+global $criterias;
+$criterias = []; // Inisialisasi agar selalu ada
 include_once __DIR__ . '/route/web.php';
 
 // --- Tambahkan baris ini untuk debugging ---
@@ -16,7 +18,6 @@ echo '';
 echo '';
 // --- Akhir baris debugging ---
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 

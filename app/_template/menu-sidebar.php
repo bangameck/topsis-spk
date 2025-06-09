@@ -8,13 +8,16 @@
         </li>
         <li><a href="<?= base_url(); ?>criteria">Kriteria</a>
         </li>
-        <li><a href="page-profile.html">Kriteria Alternatif</a>
+        <li><a href="<?= base_url(); ?>alternative">Kriteria Alternatif</a>
         </li>
       </ul>
     </li>
   <?php endif ?>
-  <?php if (!empty($_SESSION['username'])) : ?>
-    <li><a href="<?= base_url(); ?>criteria"><i class="list-icon feather feather-layers"></i> Kriteria</a>
+  <?php if ($_SESSION['level'] == 2) : ?>
+    <li><a href="<?= base_url(); ?>alternative/add"><i class="list-icon feather feather-edit"></i> Input Nilai</a>
+    <?php endif ?>
+    <li><a href="<?= base_url(); ?>topsis/results"><i class="list-icon feather feather-fast-forward"></i> Perhitungan Topsis</a>
+      <?php if (!empty($_SESSION['username'])) : ?>
     <li><a onclick="confirmLogout()"><i class="list-icon feather feather-power"></i> Logout</a>
     <?php endif ?>
     </li>
