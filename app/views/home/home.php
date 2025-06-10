@@ -39,7 +39,7 @@
                       <td><?= htmlspecialchars($result['rank']); ?></td>
                       <td><?= htmlspecialchars($result['user_name']); ?></td>
                       <td class="text-center">
-                        <?php if ($result['user_name']) {
+                        <?php if ($result['image']) {
                           $img = $result['image'];
                         } else {
                           $img = 'default.png';

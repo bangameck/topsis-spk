@@ -31,7 +31,7 @@
             </div>
           <?php else: ?>
             <h4>Data Nilai Alternatif Masyarakat</h4>
-            <table class="table table-bordered table-striped data-table">
+            <table id="tableAlternative" class="table table-bordered table-striped data-table">
               <thead>
                 <tr>
                   <th>#</th>
@@ -63,10 +63,4 @@
   </div>
 </div>
 
-<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css" />
-<script type="text/javascript" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
-<script>
-  $(document).ready(function() {
-    $('.data-table').DataTable();
-  });
-</script>
+<?php include_once __DIR__ . "/../../../config/jstable.php" ?>

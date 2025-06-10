@@ -27,12 +27,12 @@
             </div>
           <?php else: ?>
             <h4>Peringkat Alternatif (Masyarakat yang Paling Layak Dibantu)</h4>
-            <table class="table table-bordered table-striped">
+            <table id="tableResults" class="table table-bordered table-striped">
               <thead>
                 <tr>
-                  <th>Peringkat</th>
-                  <th>User (Masyarakat)</th>
-                  <th>Nilai Preferensi (V)</th>
+                  <th style="width: 10%;">Peringkat</th>
+                  <th>Nama Masyarakat</th>
+                  <th style="text-align: left;">Nilai Preferensi (V)</th>
                 </tr>
               </thead>
               <tbody>
@@ -40,7 +40,7 @@
                   <tr>
                     <td><?= htmlspecialchars($result['rank']); ?></td>
                     <td><?= htmlspecialchars($result['user_name']); ?></td>
-                    <td><?= number_format($result['score'], 4); ?></td>
+                    <td style="text-align: left;"><?= number_format($result['score'], 4); ?></td>
                   </tr>
                 <?php endforeach; ?>
               </tbody>
@@ -249,3 +249,4 @@
     margin-bottom: 15px;
   }
 </style>
+<?php include_once __DIR__ . '/../../../config/jstable.php'; ?>

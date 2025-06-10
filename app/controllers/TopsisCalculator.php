@@ -1,16 +1,13 @@
 <?php
-// topsis-skripsi/app/controllers/TopsisCalculator.php
-
 require_once __DIR__ . '/../../config/controlWeb.php';
 
 class TopsisCalculator
 {
   private $db;
-  private $criterias = []; // Data kriteria (id, weight, type)
-  private $alternatives = []; // Data alternatif (user_id, criteria_id, value)
-  private $users = []; // Data user yang punya alternatif
-  private $criteriaInfo = []; // Menyimpan semua info kriteria: id, name, weight, type
-
+  private $criterias = [];
+  private $alternatives = [];
+  private $users = [];
+  private $criteriaInfo = [];
   public function __construct(mysqli $db)
   {
     $this->db = $db;
@@ -74,7 +71,7 @@ class TopsisCalculator
     $distanceNegative = [];
     $preferenceValues = [];
 
-    // Populate the decision matrix
+    // Matrik 
     foreach ($this->users as $userId) {
       foreach ($this->criterias as $criteriaId => $data) {
         $matrix[$userId][$criteriaId] = $this->alternatives[$userId][$criteriaId] ?? 0.0;
@@ -158,7 +155,7 @@ class TopsisCalculator
       $row['rank'] = $key + 1;
     }
 
-    // --- PENTING: Kembalikan semua matriks detail dalam satu array 'detailMatrices' ---
+    // --- Kembalikan semua matriks detail dalam satu array 'detailMatrices' ---
     return [
       'rankingResults' => $results,
       'idealPositive' => $idealPositive,
@@ -166,8 +163,8 @@ class TopsisCalculator
       'allUsers' => array_map(function ($id) {
         return ['user_id' => $id, 'user_name' => $this->getUserName($id)];
       }, $this->users),
-      'criteriaInfo' => $this->criteriaInfo, // Tambahkan informasi kriteria lengkap
-      'detailMatrices' => [ // Kumpulan semua matriks detail
+      'criteriaInfo' => $this->criteriaInfo,
+      'detailMatrices' => [
         'matrix' => $matrix,
         'normalizedMatrix' => $normalizedMatrix,
         'weightedNormalizedMatrix' => $weightedNormalizedMatrix,
@@ -221,7 +218,7 @@ class TopsisCalculator
     $stmt->close();
 
     // 2. Ambil data kriteria (untuk bobot dan tipe kriteria)
-    $data['criteriaInfo'] = $this->criteriaInfo; // Sudah dimuat di __construct
+    $data['criteriaInfo'] = $this->criteriaInfo;
 
     // 3. Hitung jumlah kriteria Benefit dan Cost
     $benefit_count = 0;

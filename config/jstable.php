@@ -32,7 +32,6 @@
 
   new DataTable('#tableCriteria', {
     layout: {
-
       topEnd: {
         search: {
           placeholder: 'Cari Keriteria'
@@ -45,6 +44,51 @@
       entries: {
         _: 'criterias',
         1: 'criteria'
+      }
+    },
+    autoWidth: false
+  });
+
+
+  new DataTable('#tableAlternative', {
+    layout: {
+      top2Start: {
+        buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+      },
+      topEnd: {
+        search: {
+          placeholder: 'Cari Keriteria'
+        }
+      }
+    },
+    scrollX: true,
+    scrollY: 350,
+    language: {
+      entries: {
+        _: 'alternatives',
+        1: 'alternative'
+      }
+    },
+    autoWidth: false
+  });
+
+  new DataTable('#tableResults', {
+    layout: {
+      top2Start: {
+        buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+      },
+      topEnd: {
+        search: {
+          placeholder: 'Cari Keriteria'
+        }
+      }
+    },
+    scrollX: true,
+    scrollY: 350,
+    language: {
+      entries: {
+        _: 'results',
+        1: 'result'
       }
     },
     autoWidth: false
