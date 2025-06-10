@@ -17,9 +17,9 @@
     <div class="col-md-12 widget-holder">
       <div class="widget-bg">
         <div class="widget-body clearfix">
-          <?php if (isset($rankingResults['error'])): ?>
+          <?php if (isset($topsisData['error'])): ?>
             <div class="alert alert-danger" role="alert">
-              Error: <?= htmlspecialchars($rankingResults['error']); ?>
+              Error: <?= htmlspecialchars($topsisData['error']); ?>
             </div>
           <?php elseif (empty($rankingResults)): ?>
             <div class="alert alert-info" role="alert">
@@ -27,12 +27,12 @@
             </div>
           <?php else: ?>
             <h4>Peringkat Alternatif (Masyarakat yang Paling Layak Dibantu)</h4>
-            <table class="table table-bordered table-striped">
+            <table id="tableResults" class="table table-bordered table-striped">
               <thead>
                 <tr>
-                  <th>Peringkat</th>
-                  <th>User (Masyarakat)</th>
-                  <th>Nilai Preferensi (V)</th>
+                  <th style="width: 10%;">Peringkat</th>
+                  <th>Nama Masyarakat</th>
+                  <th style="text-align: left;">Nilai Preferensi (V)</th>
                 </tr>
               </thead>
               <tbody>
@@ -40,7 +40,7 @@
                   <tr>
                     <td><?= htmlspecialchars($result['rank']); ?></td>
                     <td><?= htmlspecialchars($result['user_name']); ?></td>
-                    <td><?= number_format($result['score'], 4); ?></td>
+                    <td style="text-align: left;"><?= number_format($result['score'], 4); ?></td>
                   </tr>
                 <?php endforeach; ?>
               </tbody>
@@ -51,27 +51,35 @@
             <h3>Detail Proses Perhitungan TOPSIS</h3>
 
             <?php
-            // Ambil daftar Criteria ID dan nama untuk header tabel
+            // Dapatkan daftar Criteria ID dan Nama dari $topsisData['criterias'] jika ada,
+            // atau dari $criteriaList yang bisa dimuat di route/web.php
+            // Untuk contoh ini, kita akan ambil dari $topsisData['idealPositive'] keys
+            // dan asumsi kita bisa mendapatkan nama kriterianya.
             $criteriaHeaders = [];
-            // Asumsi $topsis (instance TopsisCalculator) tersedia atau Anda bisa memuat ulang kriteria
-            // Untuk contoh ini, kita bisa ambil dari $rankingResults[0]['detail']['matrix'] keys
-            if (!empty($rankingResults)) {
-              foreach ($rankingResults[0]['detail']['matrix'] as $criteriaId => $value) {
-                // Ambil nama kriteria dari database jika perlu,
-                // atau Anda bisa melewatkannya sebagai bagian dari $topsis->criterias
-                // Untuk sementara, kita pakai ID kriteria langsung
-                $criteriaHeaders[$criteriaId] = $criteriaId;
+            // Ambil kriteria dari data yang dikembalikan oleh TopsisCalculator (jika ada di output)
+            // atau, cara terbaik, muat daftar kriteria di route/web.php dan kirimkan ke view
+            // Contoh: $criteriaList = $topsis->getAllCriterias(); // Tambahkan method ini di TopsisCalculator
+            // Di route/web.php: $criteriaList = $topsis->getAllCriterias();
+            // Lalu di view, gunakan $criteriaList
+
+            // Untuk demonstrasi ini, kita akan membuat array dummy atau perlu modifikasi TopsisCalculator
+            // untuk mengembalikan semua data kriteria (ID, Nama, Bobot, Tipe)
+            // Sementara, kita gunakan ID sebagai header jika nama tidak tersedia.
+            // Anggap $topsisData['criteriaInfo'] ada (akan dibahas di TopsisCalculator update)
+            if (!empty($topsisData['criteriaInfo'])) {
+              foreach ($topsisData['criteriaInfo'] as $criteriaId => $info) {
+                $criteriaHeaders[$criteriaId] = $info['criteria_name'];
               }
-              // Opsional: Jika Anda ingin nama kriteria yang lebih informatif:
-              // require_once __DIR__ . '/../controllers/TopsisCalculator.php';
-              // $tempTopsis = new TopsisCalculator($db); // Hati-hati dengan inisialisasi ulang
-              // foreach ($tempTopsis->criterias as $cid => $data) {
-              //    $criteriaHeaders[$cid] = $data['criteria_name']; // Asumsi Anda punya criteria_name di data kriteria
-              // }
+            } elseif (!empty($idealPositive)) {
+              // Fallback jika criteriaInfo belum ada, gunakan ID sebagai header
+              foreach ($idealPositive as $criteriaId => $value) {
+                $criteriaHeaders[$criteriaId] = $criteriaId; // Atau tampilkan nama jika sudah di-fetch di route/web.php
+              }
             }
             ?>
 
             <h5>1. Matriks Keputusan (X)</h5>
+            <p>Nilai input asli dari setiap alternatif pada setiap kriteria.</p>
             <table class="table table-bordered table-sm">
               <thead>
                 <tr>
@@ -82,11 +90,12 @@
                 </tr>
               </thead>
               <tbody>
-                <?php foreach ($rankingResults as $result): ?>
+                <?php foreach ($allUsersData as $userData): ?>
+                  <?php $userId = $userData['user_id']; ?>
                   <tr>
-                    <td><?= htmlspecialchars($result['user_name']); ?></td>
+                    <td><?= htmlspecialchars($userData['user_name']); ?></td>
                     <?php foreach ($criteriaHeaders as $cid => $cname): ?>
-                      <td><?= number_format($result['detail']['matrix'][$cid], 2); ?></td>
+                      <td><?= number_format($topsisData['detailMatrices']['matrix'][$userId][$cid] ?? 0, 2); ?></td>
                     <?php endforeach; ?>
                   </tr>
                 <?php endforeach; ?>
@@ -95,6 +104,8 @@
             <br>
 
             <h5>2. Matriks Normalisasi (R)</h5>
+            <p>Normalisasi dilakukan untuk menyamakan skala nilai antar kriteria. Menggunakan rumus:</p>
+            <p class='formula'>$r_{ij} = \frac{x_{ij}}{\sqrt{\sum_{i=1}^{m} x_{ij}^2}}$</p>
             <table class="table table-bordered table-sm">
               <thead>
                 <tr>
@@ -105,11 +116,12 @@
                 </tr>
               </thead>
               <tbody>
-                <?php foreach ($rankingResults as $result): ?>
+                <?php foreach ($allUsersData as $userData): ?>
+                  <?php $userId = $userData['user_id']; ?>
                   <tr>
-                    <td><?= htmlspecialchars($result['user_name']); ?></td>
+                    <td><?= htmlspecialchars($userData['user_name']); ?></td>
                     <?php foreach ($criteriaHeaders as $cid => $cname): ?>
-                      <td><?= number_format($result['detail']['normalized'][$cid], 4); ?></td>
+                      <td><?= number_format($topsisData['detailMatrices']['normalizedMatrix'][$userId][$cid] ?? 0, 4); ?></td>
                     <?php endforeach; ?>
                   </tr>
                 <?php endforeach; ?>
@@ -118,21 +130,24 @@
             <br>
 
             <h5>3. Matriks Normalisasi Terbobot (Y)</h5>
+            <p>Matriks normalisasi dikalikan dengan bobot kriteria. Menggunakan rumus:</p>
+            <p class='formula'>$y_{ij} = w_j \cdot r_{ij}$</p>
             <table class="table table-bordered table-sm">
               <thead>
                 <tr>
                   <th>User</th>
                   <?php foreach ($criteriaHeaders as $cid => $cname): ?>
-                    <th><?= htmlspecialchars($cname); ?></th>
+                    <th><?= htmlspecialchars($cname); ?> (Bobot: <?= number_format($topsisData['criteriaInfo'][$cid]['weight'] ?? 0, 2); ?>)</th>
                   <?php endforeach; ?>
                 </tr>
               </thead>
               <tbody>
-                <?php foreach ($rankingResults as $result): ?>
+                <?php foreach ($allUsersData as $userData): ?>
+                  <?php $userId = $userData['user_id']; ?>
                   <tr>
-                    <td><?= htmlspecialchars($result['user_name']); ?></td>
+                    <td><?= htmlspecialchars($userData['user_name']); ?></td>
                     <?php foreach ($criteriaHeaders as $cid => $cname): ?>
-                      <td><?= number_format($result['detail']['weighted_normalized'][$cid], 4); ?></td>
+                      <td><?= number_format($topsisData['detailMatrices']['weightedNormalizedMatrix'][$userId][$cid] ?? 0, 4); ?></td>
                     <?php endforeach; ?>
                   </tr>
                 <?php endforeach; ?>
@@ -140,58 +155,21 @@
             </table>
             <br>
 
-            <h5>4. Solusi Ideal Positif (A+) dan Negatif (A-)</h5>
-            <?php
-            // Untuk A+ dan A-, kita perlu mendapatkan langsung dari TopsisCalculator
-            // Ini akan memerlukan penyesuaian di TopsisCalculator untuk menyimpan A+ dan A-
-            // atau Anda bisa menghitung ulang di sini jika data sudah ada.
-            // Untuk kesederhanaan, kita bisa asumsikan idealPositive dan idealNegative
-            // juga dikembalikan sebagai bagian dari rankingResults (misal, di $rankingResults[0]['meta']['idealPositive'])
-            // ATAU, cara lebih baik, modifikasi TopsisCalculator untuk mengembalikan A+ dan A- secara terpisah
-            // atau buat getter method untuk A+ dan A-
-            ?>
+            <h5>4. Solusi Ideal Positif (A+) dan Negusi Ideal Negatif (A-)</h5>
+            <p>A+ adalah nilai terbaik untuk setiap kriteria, A- adalah nilai terburuk untuk setiap kriteria. Ditentukan dari matriks normalisasi terbobot.</p>
             <table class="table table-bordered table-sm">
               <thead>
                 <tr>
-                  <th>Kriteria</th>
+                  <th></th>
                   <?php foreach ($criteriaHeaders as $cid => $cname): ?>
-                    <th><?= htmlspecialchars($cname); ?></th>
+                    <th><?= htmlspecialchars($cname); ?> (Tipe: <?= htmlspecialchars($topsisData['criteriaInfo'][$cid]['type'] ?? ''); ?>)</th>
                   <?php endforeach; ?>
                 </tr>
               </thead>
               <tbody>
                 <tr>
                   <td>A+</td>
-                  <?php
-                  // Ini membutuhkan A+ dari TopsisCalculator
-                  // Untuk sekarang, kita bisa tampilkan dummy atau perlu modifikasi TopsisCalculator
-                  // Anggap $idealPositive dan $idealNegative tersedia dari TopsisCalculator
-                  // Anda bisa menambahkan getter method di TopsisCalculator untuk ini
-                  // Contoh: $topsis->getIdealPositive()
-                  // ATAU mengembalikan mereka di $rankingResults['meta']
-                  ?>
-                  <?php
-                  // Untuk contoh ini, kita akan membuat array dummy atau Anda perlu memodifikasi TopsisCalculator
-                  // agar `calculate()` mengembalikan A+ dan A- juga, misalnya:
-                  // return ['results' => $results, 'idealPositive' => $idealPositive, 'idealNegative' => $idealNegative];
-                  // Lalu di route/web.php: $topsisData = $topsis->calculate(); $rankingResults = $topsisData['results']; $idealPositive = $topsisData['idealPositive']; ...
-                  // Untuk saat ini, kita tampilkan placeholder atau ambil dari instance $topsis jika memungkinkan
-
-                  // Contoh, jika TopsisCalculator menyimpan ini di properti private, Anda butuh getter:
-                  // $idealPositive = $topsis->getIdealPositiveValues(); // Anda perlu menambahkan ini di TopsisCalculator
-                  // $idealNegative = $topsis->getIdealNegativeValues(); // Anda perlu menambahkan ini di TopsisCalculator
-
-                  // Alternatif lain, jika Anda mengembalikan mereka sebagai bagian dari `calculate()`:
-                  // Misalnya, di TopsisCalculator::calculate() return ['rankingResults' => $results, 'idealPositive' => $idealPositive, 'idealNegative' => $idealNegative];
-                  // Lalu di web.php: list($rankingResults, $idealPositive, $idealNegative) = $topsis->calculate();
-
-                  // Untuk demonstrasi di view tanpa modifikasi TopsisCalculator, ini agak sulit
-                  // Mari kita tambahkan A+ dan A- ke output `calculate()` di TopsisCalculator agar mudah diakses di sini.
-                  // Saya akan update TopsisCalculator di bagian selanjutnya.
-
-                  // Asumsi idealPositive dan idealNegative sudah ada di scope view
-                  // (akan dijelaskan bagaimana ini bisa terjadi setelah update TopsisCalculator)
-                  foreach ($criteriaHeaders as $cid => $cname): ?>
+                  <?php foreach ($criteriaHeaders as $cid => $cname): ?>
                     <td><?= number_format($idealPositive[$cid] ?? 0, 4); ?></td>
                   <?php endforeach; ?>
                 </tr>
@@ -205,7 +183,10 @@
             </table>
             <br>
 
-            <h5>5. Jarak ke Solusi Ideal (D+ dan D-)</h5>
+            <h5>5. Jarak ke Solusi Ideal Positif (D+) dan Negatif (D-)</h5>
+            <p>D+ adalah jarak setiap alternatif ke solusi ideal positif. D- adalah jarak setiap alternatif ke solusi ideal negatif. Menggunakan rumus:</p>
+            <p class='formula'>$D_i^+ = \sqrt{\sum_{j=1}^{n} (A_j^+ - y_{ij})^2}$</p>
+            <p class='formula'>$D_i^- = \sqrt{\sum_{j=1}^{n} (A_j^- - y_{ij})^2}$</p>
             <table class="table table-bordered table-sm">
               <thead>
                 <tr>
@@ -215,16 +196,38 @@
                 </tr>
               </thead>
               <tbody>
-                <?php foreach ($rankingResults as $result): ?>
+                <?php foreach ($allUsersData as $userData): ?>
+                  <?php $userId = $userData['user_id']; ?>
                   <tr>
-                    <td><?= htmlspecialchars($result['user_name']); ?></td>
-                    <td><?= number_format($result['detail']['d_plus'], 4); ?></td>
-                    <td><?= number_format($result['detail']['d_minus'], 4); ?></td>
+                    <td><?= htmlspecialchars($userData['user_name']); ?></td>
+                    <td><?= number_format($topsisData['detailMatrices']['distancePositive'][$userId] ?? 0, 4); ?></td>
+                    <td><?= number_format($topsisData['detailMatrices']['distanceNegative'][$userId] ?? 0, 4); ?></td>
                   </tr>
                 <?php endforeach; ?>
               </tbody>
             </table>
             <br>
+
+            <h5>6. Nilai Preferensi (V)</h5>
+            <p>Nilai preferensi menunjukkan seberapa dekat alternatif dengan solusi ideal positif dan seberapa jauh dari solusi ideal negatif. Menggunakan rumus:</p>
+            <p class='formula'>$V_i = \frac{D_i^-}{D_i^- + D_i^+}$</p>
+            <p>Alternatif dengan nilai V tertinggi adalah yang terbaik.</p>
+            <table class="table table-bordered table-striped">
+              <thead>
+                <tr>
+                  <th>User</th>
+                  <th>Nilai Preferensi (V)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <?php foreach ($rankingResults as $result): ?>
+                  <tr>
+                    <td><?= htmlspecialchars($result['user_name']); ?></td>
+                    <td><?= number_format($result['score'], 4); ?></td>
+                  </tr>
+                <?php endforeach; ?>
+              </tbody>
+            </table>
 
           <?php endif; ?>
         </div>
@@ -232,3 +235,18 @@
     </div>
   </div>
 </div>
+
+<style>
+  .formula {
+    font-family: serif;
+    /* Math formulas often look better in serif font */
+    font-size: 1.1em;
+    margin-left: 20px;
+    /* Indent formulas */
+    background-color: #f9f9f9;
+    padding: 8px 12px;
+    border-left: 3px solid #007bff;
+    margin-bottom: 15px;
+  }
+</style>
+<?php include_once __DIR__ . '/../../../config/jstable.php'; ?>
