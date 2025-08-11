@@ -1,4 +1,5 @@
 <?php
+<?php
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
@@ -11,6 +12,9 @@ if ($_SESSION['level'] != 1) {
   header('HTTP/1.1 401 Unauthorized');
   exit();
 }
+
+// Path profile image dinamis
+define('PROFILE_IMG_PATH', rtrim($_SERVER['DOCUMENT_ROOT'], DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'img' . DIRECTORY_SEPARATOR . 'profile' . DIRECTORY_SEPARATOR);
 
 // Get action and ID from URL
 $action = $_GET['action'] ?? '';
@@ -221,7 +225,7 @@ function handleFileUpload()
     $x = explode('.', $name_tmp);
     $extend = strtolower(end($x));
     $foto = uniqid() . '.' . $extend;
-    $path = '/home/bangameck/dev/RadevankaProject/topsis-skripsi/assets/img/profile/';
+    $path = PROFILE_IMG_PATH;
 
     if (in_array($extend, $ext_valid)) {
       $hasil = fotoCompressResize($foto, $file_tmp, $path);
@@ -240,7 +244,7 @@ function handleFileUpload()
 
 function deleteProfileImage($filename)
 {
-  $filepath = '/home/bangameck/dev/RadevankaProject/topsis-skripsi/assets/img/profile/' . $filename;
+  $filepath = PROFILE_IMG_PATH . $filename;
   if (file_exists($filepath)) {
     unlink($filepath);
     toastNotif('success', 'Image berhasil terhapus.');

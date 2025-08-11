@@ -152,7 +152,7 @@ class TopsisCalculator
     });
 
     foreach ($results as $key => &$row) {
-      $row['rank'] = $key + 1;
+      $row['peringkat'] = $key + 1;
     }
 
     // --- Kembalikan semua matriks detail dalam satu array 'detailMatrices' ---
@@ -191,13 +191,13 @@ class TopsisCalculator
       return false;
     }
     $this->db->query("TRUNCATE TABLE ranking");
-    $stmt = $this->db->prepare("INSERT INTO ranking (user_id, score, rank, calculated_at) VALUES (?, ?, ?, NOW())");
+    $stmt = $this->db->prepare("INSERT INTO ranking (user_id, score, peringkat, calculated_at) VALUES (?, ?, ?, NOW())");
     if ($stmt === false) {
       error_log("Failed to prepare ranking insert: " . $this->db->error);
       return false;
     }
     foreach ($results as $row) {
-      $stmt->bind_param("idi", $row['user_id'], $row['score'], $row['rank']);
+      $stmt->bind_param("idi", $row['user_id'], $row['score'], $row['peringkat']);
       if (!$stmt->execute()) {
         error_log("Failed to insert ranking for user_id " . $row['user_id'] . ": " . $stmt->error);
       }
@@ -211,7 +211,7 @@ class TopsisCalculator
     $data = [];
 
     // 1. Ambil data ranking (untuk grafik peringkat dan statistik teratas)
-    $stmt = $this->db->prepare("SELECT r.user_id, r.score, r.rank, u.name AS user_name, u.img AS image FROM ranking r JOIN users u ON r.user_id = u.user_id ORDER BY r.rank ASC LIMIT 5");
+    $stmt = $this->db->prepare("SELECT r.user_id, r.score, r.peringkat, u.name AS user_name, u.img AS image FROM ranking r JOIN users u ON r.user_id = u.user_id ORDER BY r.peringkat ASC LIMIT 5");
     $stmt->execute();
     $result = $stmt->get_result();
     $data['rankingResults'] = $result->fetch_all(MYSQLI_ASSOC);

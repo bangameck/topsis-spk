@@ -1,10 +1,3 @@
-<?php
-// topsis-skripsi/app/views/topsis/results.php
-
-// Pastikan variabel-variabel ini tersedia dari route/web.php
-// $rankingResults, $idealPositive, $idealNegative, $allUsersData, $detailMatrices, $criteriaInfo
-?>
-
 <title>Hasil Perhitungan TOPSIS</title>
 <div class="row page-title clearfix">
   <div class="page-title-left">
@@ -45,7 +38,7 @@
               <tbody>
                 <?php foreach ($rankingResults as $result): ?>
                   <tr>
-                    <td><?= htmlspecialchars($result['rank']); ?></td>
+                    <td><?= htmlspecialchars($result['peringkat']); ?></td>
                     <td><?= htmlspecialchars($result['user_name']); ?></td>
                     <td style="text-align: left;"><?= number_format($result['score'], 4); ?></td>
                   </tr>
@@ -87,7 +80,7 @@
                   <tr>
                     <td><?= htmlspecialchars($userData['user_name']); ?></td>
                     <?php foreach ($criteriaHeaders as $cid => $cname): ?>
-                      <td><?= number_format($topsisData['detailMatrices']['matrix'][$userId][$cid] ?? 0, 2); ?></td>
+                      <td><?= number_format($topsisData['detailMatrices']['matrix'][$userId][$cid] ?? 0); ?></td>
                     <?php endforeach; ?>
                   </tr>
                 <?php endforeach; ?>
@@ -97,9 +90,9 @@
 
               <h5>2. Matriks Normalisasi (R)</h5>
               <p>Normalisasi dilakukan untuk menyamakan skala nilai antar kriteria. Menggunakan rumus:</p>
-              <div class="formula">
+              <!-- <div class="formula">
                 $$r_{ij} = \frac{x_{ij}}{\sqrt{\sum_{i=1}^{m} x_{ij}^2}}$$
-              </div>
+              </div> -->
               <table class="table table-bordered table-sm">
                 <thead>
                   <tr>
@@ -125,9 +118,9 @@
 
               <h5>3. Matriks Normalisasi Terbobot (Y)</h5>
               <p>Matriks normalisasi dikalikan dengan bobot kriteria. Menggunakan rumus:</p>
-              <div class="formula">
+              <!-- <div class="formula">
                 $$y_{ij} = w_j \cdot r_{ij}$$
-              </div>
+              </div> -->
               <table class="table table-bordered table-sm">
                 <thead>
                   <tr>
@@ -181,12 +174,12 @@
 
               <h5>5. Jarak ke Solusi Ideal Positif (D+) dan Negatif (D-)</h5>
               <p>D+ adalah jarak setiap alternatif ke solusi ideal positif. D- adalah jarak setiap alternatif ke solusi ideal negatif. Menggunakan rumus:</p>
-              <div class="formula">
+              <!-- <div class="formula">
                 $$D_i^+ = \sqrt{\sum_{j=1}^{n} (A_j^+ - y_{ij})^2}$$
               </div>
               <div class="formula">
                 $$D_i^- = \sqrt{\sum_{j=1}^{n} (A_j^- - y_{ij})^2}$$
-              </div>
+              </div> -->
               <table class="table table-bordered table-sm">
                 <thead>
                   <tr>
@@ -210,9 +203,9 @@
 
               <h5>6. Nilai Preferensi (V)</h5>
               <p>Nilai preferensi menunjukkan seberapa dekat alternatif dengan solusi ideal positif dan seberapa jauh dari solusi ideal negatif. Menggunakan rumus:</p>
-              <div class="formula">
+              <!-- <div class="formula">
                 $$V_i = \frac{D_i^-}{D_i^- + D_i^+}$$
-              </div>
+              </div> -->
               <p>Alternatif dengan nilai V tertinggi adalah yang terbaik.</p>
               <table class="table table-bordered table-striped">
                 <thead>

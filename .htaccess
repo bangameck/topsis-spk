@@ -19,6 +19,7 @@ RewriteRule ^home$ index.php [L]
 
 #Login/Logout
 RewriteRule ^login$ app/views/login.php [L]
+RewriteRule ^register$ app/views/register.php [L]
 RewriteRule ^out$ app/views/logout.php [L]
 
 #HalamanUsers[Add,Edit]

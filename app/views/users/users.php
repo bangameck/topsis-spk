@@ -35,7 +35,7 @@ if ($_SESSION['level'] != 1) {
           <h5 class="mb-0"></h5>
           <div>
             <a href="<?= base_url(); ?>users/add" class="btn btn-primary">
-              <i class="fas fa-user-plus mr-1"></i> Add User
+              <i class="fas fa-user-plus mr-1"></i> Add Anggota
             </a>
           </div>
         </div>

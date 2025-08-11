@@ -23,6 +23,12 @@ if (isset($_POST['login'])) {
         $_SESSION['level']    = $r['level'];
         $_SESSION['img']      = $r['img'];
 
+        if ($_SESSION['level'] == '2') {
+          toastNotif('success', 'Selamat datang di TOPSIS App');
+          header("Location: " . base_url() . "alternative/add");
+          exit;
+        }
+
         toastNotif('success', 'Selamat datang di TOPSIS App');
         header("Location: " . base_url() . "home");
         exit;

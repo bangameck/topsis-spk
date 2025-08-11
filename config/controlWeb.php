@@ -9,10 +9,13 @@
 
 <?php
 #startSession and Error Reporting
-// error_reporting(E_ALL);
-// ini_set('display_errors', 1);
-error_reporting(E_ALL ^ (E_NOTICE | E_WARNING));
-error_reporting(0);
+// Selama pengembangan, tampilkan semua error.
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+// Untuk production, sebaiknya matikan display_errors dan catat error ke file log.
+// ini_set('display_errors', 0);
+// ini_set('log_errors', 1);
 session_start();
 ini_set('max_execution_time', 3600);
 date_default_timezone_set('Asia/Jakarta');
@@ -20,7 +23,7 @@ date_default_timezone_set('Asia/Jakarta');
 #Control Database
 $srvName = "localhost";
 $dbUser = "root";
-$dbPass = "12345678";
+$dbPass = "";
 $dbName = "topsis_spk";
 $db = new mysqli($srvName, $dbUser, $dbPass, $dbName);
 if ($db->connect_error) {

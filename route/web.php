@@ -85,6 +85,34 @@ function routes($m, $r)
       }
       break;
 
+    case 'auth':
+      require_once __DIR__ . '/../app/controllers/AuthController.php';
+      $auth = new AuthController($db);
+
+      if ($r == 'register') {
+        return include "app/views/auth/register.php";
+      } elseif ($r == 'process-register') {
+        $auth->processRegister();
+        exit();
+      }
+      // Anda bisa menambahkan case untuk login, logout, dll di sini
+      break;
+
+    case 'ranking':
+      if ($r == 'list') {
+        // Hanya admin yang boleh melihat daftar peringkat
+        if (!isset($_SESSION['level']) || $_SESSION['level'] != 1) {
+          header('Location: ' . base_url('home'));
+          exit();
+        }
+        require_once __DIR__ . '/../app/controllers/TopsisCalculator.php';
+        $topsis = new TopsisCalculator($db);
+        // Panggil fungsi baru untuk mengambil data dari tabel ranking_results
+        $savedRankings = $topsis->getSavedRankings(); 
+        return include "app/views/ranking/list.php"; // Muat view baru
+      }
+      break;
+
     case 'users':
     case 'criteria':
     case 'dashboard':

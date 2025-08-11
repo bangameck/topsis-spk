@@ -1,10 +1,3 @@
-<?php
-// topsis-skripsi/app/views/alternative/list.php
-
-// Pastikan $alternativesList sudah tersedia di sini dari route/web.php
-// Pastikan $criteriaList juga tersedia untuk mapping criteria_id ke criteria_name
-?>
-
 <title>Daftar Nilai Alternatif</title>
 <div class="row page-title clearfix">
   <div class="page-title-left">

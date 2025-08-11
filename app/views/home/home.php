@@ -28,25 +28,18 @@
               <table class="table table-striped table-responsive" data-toggle="datatables" data-plugin-options='{"searching": true}'>
                 <thead class="thead-dark">
                   <tr>
-                    <th>rank</th>
+                    <th>Rank</th>
                     <th>Nama</th>
+                    <th>Nilai</th>
                     <th></th>
                   </tr>
                 </thead>
                 <tbody>
                   <?php foreach ($rankingResults as $result): ?>
                     <tr>
-                      <td><?= htmlspecialchars($result['rank']); ?></td>
+                      <td><?= htmlspecialchars($result['peringkat']); ?></td>
                       <td><?= htmlspecialchars($result['user_name']); ?></td>
-                      <td class="text-center">
-                        <?php if ($result['image']) {
-                          $img = $result['image'];
-                        } else {
-                          $img = 'default.png';
-                        } ?>
-                        <figure class="thumb-xs2">
-                          <img class="rounded-circle" src="assets/img/profile/<?= $img; ?>" alt="">
-                        </figure>
+                      <td style="text-align: left;"><?= number_format($result['score'], 4); ?></td>
                       </td>
                     </tr>
                   <?php endforeach; ?>

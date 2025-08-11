@@ -62,7 +62,7 @@
       }
     },
     scrollX: true,
-    scrollY: 350,
+    scrollY: 400,
     language: {
       entries: {
         _: 'alternatives',
@@ -84,7 +84,7 @@
       }
     },
     scrollX: true,
-    scrollY: 350,
+    scrollY: 400,
     language: {
       entries: {
         _: 'results',
