@@ -353,7 +353,18 @@ function handleDeleteUser($id)
         exit();
     }
 
-    // Delete user
+    // Hapus data dari tabel anak (ranking, masyarakat, dst)
+    $stmt = $db->prepare("DELETE FROM ranking WHERE user_id = ?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $stmt->close();
+
+    $stmt = $db->prepare("DELETE FROM masyarakat WHERE user_id = ?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $stmt->close();
+
+    // Baru hapus user
     $stmt = $db->prepare("DELETE FROM users WHERE user_id = ?");
     $stmt->bind_param("i", $id);
 
@@ -364,7 +375,7 @@ function handleDeleteUser($id)
         }
         toastNotif('success', 'User berhasil dihapus');
     } else {
-        toastNotif('error', 'User tidak berhasil dihapus' . $db->error);
+        toastNotif('error', 'User tidak berhasil dihapus. ' . $db->error);
     }
     $stmt->close();
 
