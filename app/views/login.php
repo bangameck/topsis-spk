@@ -1,50 +1,50 @@
 <?php
-include_once __DIR__ . '/../../config/controlWeb.php';
+    include_once __DIR__ . '/../../config/controlWeb.php';
 
-if (isset($_POST['login'])) {
-  if (!check_csrf_token($_POST['csrf_token'] ?? '')) {
-    toastNotif('error', 'Token CSRF tidak valid.');
-  } elseif (empty($_POST['username']) || empty($_POST['password'])) {
-    toastNotif('error', 'Username dan Password wajib diisi.');
-  } else {
-    $u = $db->real_escape_string(trim($_POST['username']));
-    $p = $db->real_escape_string(trim($_POST['password']));
-    $q = $db->query("SELECT * FROM users WHERE username='$u'");
+    if (isset($_POST['login'])) {
+        if (! check_csrf_token($_POST['csrf_token'] ?? '')) {
+            toastNotif('error', 'Token CSRF tidak valid.');
+        } elseif (empty($_POST['username']) || empty($_POST['password'])) {
+            toastNotif('error', 'Username dan Password wajib diisi.');
+        } else {
+            $u = $db->real_escape_string(trim($_POST['username']));
+            $p = $db->real_escape_string(trim($_POST['password']));
+            $q = $db->query("SELECT * FROM users WHERE username='$u'");
 
-    if ($q && $q->num_rows >= 1) {
-      $r = $q->fetch_assoc();
-      $ph = $r['password'];
+            if ($q && $q->num_rows >= 1) {
+                $r  = $q->fetch_assoc();
+                $ph = $r['password'];
 
-      if (password_verify($p, $ph)) {
-        $_SESSION['user_id'] = $r['user_id'];
-        $_SESSION['username'] = $r['username'];
-        $_SESSION['password'] = $r['password'];
-        $_SESSION['name']     = $r['name'];
-        $_SESSION['level']    = $r['level'];
-        $_SESSION['img']      = $r['img'];
+                if (password_verify($p, $ph)) {
+                    $_SESSION['user_id']  = $r['user_id'];
+                    $_SESSION['username'] = $r['username'];
+                    $_SESSION['password'] = $r['password'];
+                    $_SESSION['name']     = $r['name'];
+                    $_SESSION['level']    = $r['level'];
+                    $_SESSION['img']      = $r['img'];
 
-        if ($_SESSION['level'] == '2') {
-          toastNotif('success', 'Selamat datang di TOPSIS App');
-          header("Location: " . base_url() . "alternative/add");
-          exit;
+                    if ($_SESSION['level'] == '2') {
+                        toastNotif('success', 'Selamat datang di TOPSIS App');
+                        header("Location: " . base_url() . "alternative/add");
+                        exit;
+                    }
+
+                    toastNotif('success', 'Selamat datang di TOPSIS App');
+                    header("Location: " . base_url() . "home");
+                    exit;
+                } else {
+                    toastNotif('error', 'Password Salah!');
+                }
+            } else {
+                toastNotif('error', 'Username tidak ditemukan!');
+            }
         }
+    }
 
-        toastNotif('success', 'Selamat datang di TOPSIS App');
+    if (! empty($_SESSION['username'])) {
         header("Location: " . base_url() . "home");
         exit;
-      } else {
-        toastNotif('error', 'Password Salah!');
-      }
-    } else {
-      toastNotif('error', 'Username tidak ditemukan!');
     }
-  }
-}
-
-if (!empty($_SESSION['username'])) {
-  header("Location: " . base_url() . "home");
-  exit;
-}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -73,8 +73,10 @@ if (!empty($_SESSION['username'])) {
   <div id="wrapper" class="wrapper">
     <div class="row container-min-full-height">
       <div class="col-lg-12 p-4 login-left">
-        <div class="w-50">
-          <h2 class="mb-4 text-center">Silahkan Login!</h2>
+        <div class="text-center w-50">
+           <img class="rounded-circle" width="100px" src="<?php echo base_url() ?>assets/img/koperasi.png" alt="Logo of Koperasi Indonesia featuring a green banyan tree with roots and branches, a yellow gear and chain border, a balance scale with a star above, and a yellow ribbon at the bottom with the text KOPERASI INDONESIA. The design conveys unity, cooperation, and stability in a formal and official tone.">
+            <h2 class="mb-2 mt-3">KOPERASI BUDI KARYA JAYA</h2>
+            <h5 class="mb-2 mt-3">Silahkan Login!</h5>
           <form class="text-center" method="post">
             <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(generate_csrf_token()); ?>">
             <div class="form-group">
@@ -92,8 +94,11 @@ if (!empty($_SESSION['username'])) {
               <button class="btn btn-block btn-rounded btn-md btn-color-scheme text-uppercase fw-600 ripple" type="submit" name="login">Sign In</button>
             </div>
           </form>
+           <div class="text-center mb-3">
+            <p class="text-muted">Belum punya akun? <a href="<?php echo base_url(); ?>register" class="text-primary fw-600">Daftar di sini</a></p>
+          </div>
           <!-- /form -->
-          <a href="<?= base_url(); ?>home"><button type="button" class="btn btn-block btn-rounded btn-outline-facebook ripple" title="Login with Facebook">Kembali ke <span class="fw-700">Dashboard</span>
+          <a href="<?php echo base_url(); ?>home"><button type="button" class="btn btn-block btn-rounded btn-outline-facebook ripple" title="Login with Facebook">Kembali ke <span class="fw-700">Dashboard</span>
             </button></a>
         </div>
         <!-- /.w-75 -->
@@ -132,11 +137,11 @@ if (!empty($_SESSION['username'])) {
 
       // Tampilkan notifikasi dari session
       <?php if (isset($_SESSION['toast_notifications'])): ?>
-        <?php foreach ($_SESSION['toast_notifications'] as $notification): ?>
-          toastr.<?= $notification['type'] ?>('<?= addslashes($notification['message']) ?>');
+<?php foreach ($_SESSION['toast_notifications'] as $notification): ?>
+          toastr.<?php echo $notification['type'] ?>('<?php echo addslashes($notification['message']) ?>');
         <?php endforeach; ?>
-        <?php unset($_SESSION['toast_notifications']); ?>
-      <?php endif; ?>
+<?php unset($_SESSION['toast_notifications']); ?>
+<?php endif; ?>
     });
   </script>
 </body>

@@ -25,11 +25,13 @@ RewriteRule ^out$ app/views/logout.php [L]
 #HalamanUsers[Add,Edit]
 RewriteRule ^users$ index.php?m=users&r=users [L,QSA]
 RewriteRule ^users/add$ index.php?m=users&r=add [L,QSA]
+RewriteRule ^users/editProfile$ index.php?m=users&r=editProfile [L,QSA]
 RewriteRule ^users/edit/([0-9]+)$ index.php?m=users&r=edit&id=$1 [L,QSA]
 
 #UsersActions
 RewriteRule ^users/actionAdd$ app/controllers/UsersControllers.php?action=add [L,QSA]
 RewriteRule ^users/actionEdit/([0-9]+)$ app/controllers/UsersControllers.php?action=edit&id=$1 [L,QSA]
+RewriteRule ^users/actionEditProfile$ app/controllers/UsersControllers.php?action=editProfile [L,QSA]
 RewriteRule ^users/delete/([0-9]+)$ app/controllers/UsersControllers.php?action=delete&id=$1 [L,QSA]
 
 #halamanKriteria

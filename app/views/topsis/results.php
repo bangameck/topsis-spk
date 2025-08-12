@@ -6,7 +6,7 @@
   </div>
   <div class="page-title-right d-none d-sm-inline-flex">
     <ol class="breadcrumb">
-      <li class="breadcrumb-item"><a href="<?= base_url(); ?>home">Home</a></li>
+      <li class="breadcrumb-item"><a href="<?php echo base_url();?>home">Home</a></li>
       <li class="breadcrumb-item active">Hasil TOPSIS</li>
     </ol>
   </div>
@@ -19,7 +19,7 @@
         <div class="widget-body clearfix">
           <?php if (isset($topsisData['error'])): ?>
             <div class="alert alert-danger" role="alert">
-              Error: <?= htmlspecialchars($topsisData['error']); ?>
+              Error: <?php echo htmlspecialchars($topsisData['error']);?>
             </div>
           <?php elseif (empty($rankingResults)): ?>
             <div class="alert alert-info" role="alert">
@@ -38,29 +38,29 @@
               <tbody>
                 <?php foreach ($rankingResults as $result): ?>
                   <tr>
-                    <td><?= htmlspecialchars($result['peringkat']); ?></td>
-                    <td><?= htmlspecialchars($result['user_name']); ?></td>
-                    <td style="text-align: left;"><?= number_format($result['score'], 4); ?></td>
+                    <td><?php echo htmlspecialchars($result['peringkat']);?></td>
+                    <td><?php echo htmlspecialchars($result['user_name']);?></td>
+                    <td style="text-align: left;"><?php echo number_format($result['score'], 4);?></td>
                   </tr>
                 <?php endforeach; ?>
               </tbody>
             </table>
 
-            <hr>
+            <!-- <hr>
 
             <h3>Detail Proses Perhitungan TOPSIS</h3>
 
             <?php
-            $criteriaHeaders = [];
-            if (!empty($criteriaInfo)) {
-              foreach ($criteriaInfo as $criteriaId => $info) {
-                $criteriaHeaders[$criteriaId] = $info['criteria_name'];
-              }
-            } elseif (!empty($idealPositive)) {
-              foreach ($idealPositive as $criteriaId => $value) {
-                $criteriaHeaders[$criteriaId] = $criteriaId;
-              }
-            }
+                $criteriaHeaders = [];
+                if (! empty($criteriaInfo)) {
+                    foreach ($criteriaInfo as $criteriaId => $info) {
+                        $criteriaHeaders[$criteriaId] = $info['criteria_name'];
+                    }
+                } elseif (! empty($idealPositive)) {
+                    foreach ($idealPositive as $criteriaId => $value) {
+                        $criteriaHeaders[$criteriaId] = $criteriaId;
+                    }
+                }
             ?>
 
             <h5>1. Matriks Keputusan (X)</h5>
@@ -70,17 +70,17 @@
                 <tr>
                   <th>User</th>
                   <?php foreach ($criteriaHeaders as $cid => $cname): ?>
-                    <th><?= htmlspecialchars($cname); ?></th>
+                    <th><?php echo htmlspecialchars($cname);?></th>
                   <?php endforeach; ?>
                 </tr>
               </thead>
               <tbody>
                 <?php foreach ($allUsersData as $userData): ?>
-                  <?php $userId = $userData['user_id']; ?>
+<?php $userId = $userData['user_id']; ?>
                   <tr>
-                    <td><?= htmlspecialchars($userData['user_name']); ?></td>
+                    <td><?php echo htmlspecialchars($userData['user_name']);?></td>
                     <?php foreach ($criteriaHeaders as $cid => $cname): ?>
-                      <td><?= number_format($topsisData['detailMatrices']['matrix'][$userId][$cid] ?? 0); ?></td>
+                      <td><?php echo number_format($topsisData['detailMatrices']['matrix'][$userId][$cid] ?? 0);?></td>
                     <?php endforeach; ?>
                   </tr>
                 <?php endforeach; ?>
@@ -89,26 +89,26 @@
               <br>
 
               <h5>2. Matriks Normalisasi (R)</h5>
-              <p>Normalisasi dilakukan untuk menyamakan skala nilai antar kriteria. Menggunakan rumus:</p>
+              <p>Normalisasi dilakukan untuk menyamakan skala nilai antar kriteria. Menggunakan rumus:</p> -->
               <!-- <div class="formula">
                 $$r_{ij} = \frac{x_{ij}}{\sqrt{\sum_{i=1}^{m} x_{ij}^2}}$$
               </div> -->
-              <table class="table table-bordered table-sm">
+              <!-- <table class="table table-bordered table-sm">
                 <thead>
                   <tr>
                     <th>User</th>
                     <?php foreach ($criteriaHeaders as $cid => $cname): ?>
-                      <th><?= htmlspecialchars($cname); ?></th>
+                      <th><?php echo htmlspecialchars($cname);?></th>
                     <?php endforeach; ?>
                   </tr>
                 </thead>
                 <tbody>
                   <?php foreach ($allUsersData as $userData): ?>
-                    <?php $userId = $userData['user_id']; ?>
+<?php $userId = $userData['user_id']; ?>
                     <tr>
-                      <td><?= htmlspecialchars($userData['user_name']); ?></td>
+                      <td><?php echo htmlspecialchars($userData['user_name']);?></td>
                       <?php foreach ($criteriaHeaders as $cid => $cname): ?>
-                        <td><?= number_format($detailMatrices['normalizedMatrix'][$userId][$cid] ?? 0, 4); ?></td>
+                        <td><?php echo number_format($detailMatrices['normalizedMatrix'][$userId][$cid] ?? 0, 4);?></td>
                       <?php endforeach; ?>
                     </tr>
                   <?php endforeach; ?>
@@ -117,26 +117,26 @@
               <br>
 
               <h5>3. Matriks Normalisasi Terbobot (Y)</h5>
-              <p>Matriks normalisasi dikalikan dengan bobot kriteria. Menggunakan rumus:</p>
+              <p>Matriks normalisasi dikalikan dengan bobot kriteria. Menggunakan rumus:</p> -->
               <!-- <div class="formula">
                 $$y_{ij} = w_j \cdot r_{ij}$$
               </div> -->
-              <table class="table table-bordered table-sm">
+              <!-- <table class="table table-bordered table-sm">
                 <thead>
                   <tr>
                     <th>User</th>
                     <?php foreach ($criteriaHeaders as $cid => $cname): ?>
-                      <th><?= htmlspecialchars($cname); ?> (Bobot: <?= number_format($criteriaInfo[$cid]['weight'] ?? 0, 2); ?>)</th>
+                      <th><?php echo htmlspecialchars($cname);?> (Bobot: <?php echo number_format($criteriaInfo[$cid]['weight'] ?? 0, 2);?>)</th>
                     <?php endforeach; ?>
                   </tr>
                 </thead>
                 <tbody>
                   <?php foreach ($allUsersData as $userData): ?>
-                    <?php $userId = $userData['user_id']; ?>
+<?php $userId = $userData['user_id']; ?>
                     <tr>
-                      <td><?= htmlspecialchars($userData['user_name']); ?></td>
+                      <td><?php echo htmlspecialchars($userData['user_name']);?></td>
                       <?php foreach ($criteriaHeaders as $cid => $cname): ?>
-                        <td><?= number_format($detailMatrices['weightedNormalizedMatrix'][$userId][$cid] ?? 0, 4); ?></td>
+                        <td><?php echo number_format($detailMatrices['weightedNormalizedMatrix'][$userId][$cid] ?? 0, 4);?></td>
                       <?php endforeach; ?>
                     </tr>
                   <?php endforeach; ?>
@@ -151,7 +151,7 @@
                   <tr>
                     <th></th>
                     <?php foreach ($criteriaHeaders as $cid => $cname): ?>
-                      <th><?= htmlspecialchars($cname); ?> (Tipe: <?= htmlspecialchars($criteriaInfo[$cid]['type'] ?? ''); ?>)</th>
+                      <th><?php echo htmlspecialchars($cname);?> (Tipe: <?php echo htmlspecialchars($criteriaInfo[$cid]['type'] ?? '');?>)</th>
                     <?php endforeach; ?>
                   </tr>
                 </thead>
@@ -159,13 +159,13 @@
                   <tr>
                     <td>A+</td>
                     <?php foreach ($criteriaHeaders as $cid => $cname): ?>
-                      <td><?= number_format($idealPositive[$cid] ?? 0, 4); ?></td>
+                      <td><?php echo number_format($idealPositive[$cid] ?? 0, 4);?></td>
                     <?php endforeach; ?>
                   </tr>
                   <tr>
                     <td>A-</td>
                     <?php foreach ($criteriaHeaders as $cid => $cname): ?>
-                      <td><?= number_format($idealNegative[$cid] ?? 0, 4); ?></td>
+                      <td><?php echo number_format($idealNegative[$cid] ?? 0, 4);?></td>
                     <?php endforeach; ?>
                   </tr>
                 </tbody>
@@ -173,14 +173,14 @@
               <br>
 
               <h5>5. Jarak ke Solusi Ideal Positif (D+) dan Negatif (D-)</h5>
-              <p>D+ adalah jarak setiap alternatif ke solusi ideal positif. D- adalah jarak setiap alternatif ke solusi ideal negatif. Menggunakan rumus:</p>
+              <p>D+ adalah jarak setiap alternatif ke solusi ideal positif. D- adalah jarak setiap alternatif ke solusi ideal negatif. Menggunakan rumus:</p> -->
               <!-- <div class="formula">
                 $$D_i^+ = \sqrt{\sum_{j=1}^{n} (A_j^+ - y_{ij})^2}$$
               </div>
               <div class="formula">
                 $$D_i^- = \sqrt{\sum_{j=1}^{n} (A_j^- - y_{ij})^2}$$
               </div> -->
-              <table class="table table-bordered table-sm">
+              <!-- <table class="table table-bordered table-sm">
                 <thead>
                   <tr>
                     <th>User</th>
@@ -190,11 +190,11 @@
                 </thead>
                 <tbody>
                   <?php foreach ($allUsersData as $userData): ?>
-                    <?php $userId = $userData['user_id']; ?>
+<?php $userId = $userData['user_id']; ?>
                     <tr>
-                      <td><?= htmlspecialchars($userData['user_name']); ?></td>
-                      <td><?= number_format($detailMatrices['distancePositive'][$userId] ?? 0, 4); ?></td>
-                      <td><?= number_format($detailMatrices['distanceNegative'][$userId] ?? 0, 4); ?></td>
+                      <td><?php echo htmlspecialchars($userData['user_name']);?></td>
+                      <td><?php echo number_format($detailMatrices['distancePositive'][$userId] ?? 0, 4);?></td>
+                      <td><?php echo number_format($detailMatrices['distanceNegative'][$userId] ?? 0, 4);?></td>
                     </tr>
                   <?php endforeach; ?>
                 </tbody>
@@ -202,11 +202,11 @@
               <br>
 
               <h5>6. Nilai Preferensi (V)</h5>
-              <p>Nilai preferensi menunjukkan seberapa dekat alternatif dengan solusi ideal positif dan seberapa jauh dari solusi ideal negatif. Menggunakan rumus:</p>
+              <p>Nilai preferensi menunjukkan seberapa dekat alternatif dengan solusi ideal positif dan seberapa jauh dari solusi ideal negatif. Menggunakan rumus:</p> -->
               <!-- <div class="formula">
                 $$V_i = \frac{D_i^-}{D_i^- + D_i^+}$$
               </div> -->
-              <p>Alternatif dengan nilai V tertinggi adalah yang terbaik.</p>
+              <!-- <p>Alternatif dengan nilai V tertinggi adalah yang terbaik.</p>
               <table class="table table-bordered table-striped">
                 <thead>
                   <tr>
@@ -217,14 +217,14 @@
                 <tbody>
                   <?php foreach ($rankingResults as $result): ?>
                     <tr>
-                      <td><?= htmlspecialchars($result['user_name']); ?></td>
-                      <td><?= number_format($result['score'], 4); ?></td>
+                      <td><?php echo htmlspecialchars($result['user_name']);?></td>
+                      <td><?php echo number_format($result['score'], 4);?></td>
                     </tr>
                   <?php endforeach; ?>
                 </tbody>
               </table>
 
-            <?php endif; ?>
+            <?php endif; ?> -->
         </div>
       </div>
     </div>
@@ -262,4 +262,4 @@
     }
   };
 </script>
-<?php include_once __DIR__ . '/../../../config/jstable.php' ?>
+<?php include_once __DIR__ . '/../../../config/jstable.php'?>
